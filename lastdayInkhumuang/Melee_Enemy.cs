@@ -17,6 +17,9 @@ namespace lastdayInkhumuang
         bool Hitted;
         bool alive;
         float delayHitted;
+
+        const int KNOCKBACK = 100;
+        const float REGEN_HP = 0.2f;
         //const int SIZE_HEIGHT = 180;
         //const int SIZE_WIDTH = 150;
         public Melee_Enemy(Game1 game, Vector2 position, Vector2 tileLocation, string element, int boundHeight, int boundWidth, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, tileLocation, boundHeight, boundWidth, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
@@ -46,9 +49,8 @@ namespace lastdayInkhumuang
 
         public void Update(Player player, float elapsed)
         {
-
-            Console.WriteLine(alive);
-            Console.WriteLine("IsEnable : " + IsEnable);
+                    
+            
             //Check Alive
             if (alive)
             {
@@ -91,6 +93,40 @@ namespace lastdayInkhumuang
                 {
                     position.Y += speed;
                     outSide = true;
+                }
+
+                //Hitted                
+                if (Hitted && delayHitted == 0)
+                {
+                    hp -= damage;
+                    if (player.GetPos().X + 64 < position.X + 90)
+                    {
+                        position.X += KNOCKBACK;
+                    }
+                    if (player.GetPos().X + 64 > position.X + 90)
+                    {
+                        position.X -= KNOCKBACK;
+                    }
+                    else if (player.GetPos().Y + 64 > position.Y + 120)
+                    {
+                        position.Y -= KNOCKBACK;
+                    }
+                    else if (player.GetPos().Y + 64 < position.Y + 120)
+                    {
+                        position.Y += KNOCKBACK;
+                    }
+                }
+                if (Hitted)
+                {
+                    delayHitted += elapsed;
+                    if (delayHitted >= 1)
+                    {
+                        Hitted = false;
+                    }
+                }
+                else
+                {
+                    delayHitted = 0;
                 }
 
                 //Follow player
@@ -144,6 +180,13 @@ namespace lastdayInkhumuang
                     {
                         position.Y -= speedToOriginPos;
                     }
+                    if (position == originPos)
+                    {
+                        if (hp < 100)
+                        {
+                            hp += REGEN_HP;
+                        }
+                    }
                 }
                 if (!outSide)
                 {
@@ -170,28 +213,8 @@ namespace lastdayInkhumuang
                 else
                 {
                     dealDamage = false;
-                }
-
-                //Hitted
-                if (Hitted && delayHitted == 0)
-                {
-                    hp -= damage;
-                }
-                if (Hitted)
-                {
-                    delayHitted += elapsed;
-                    if (delayHitted >= 1)
-                    {
-                        Hitted = false;
-                    }
-                }
-                else
-                {
-                    delayHitted = 0;
-                }
-            }
-            
-            
+                }                
+            }                        
         }
 
         public void CheckColiision(GameObject player, GameObject playerAtk, GameObject playerSkill, PlayerAttackEffect gotAtk, PlayerSkills gotSkills)

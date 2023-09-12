@@ -23,7 +23,7 @@ namespace lastdayInkhumuang
 
         public void Update(float elapsed, Player player, GraphicsDevice gd)
         {
-            Console.WriteLine(player.GetStamina());
+            position = new Vector2(Game1._cameraPosition.X, Game1._cameraPosition.Y + 30);
             if (player.GetStamina() > 0)
             {
                 staminaWidth = (player.GetStamina() / MAX_STAMINA) * drawWidth;

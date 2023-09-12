@@ -61,10 +61,7 @@ namespace lastdayInkhumuang
             this.layerDepth = layerDepth;
         }
 
-        public virtual Rectangle Bounds
-        {
-            get { return new Rectangle((int)position.X, (int)position.Y, boundWidth, boundHeight); }
-        }
+        public virtual Rectangle Bounds { get { return new Rectangle((int)position.X, (int)position.Y, boundWidth, boundHeight); }}
 
         public bool IsEnable
         {

@@ -25,6 +25,7 @@ namespace lastdayInkhumuang
 
         public void Update(float elapsed, Player player, GraphicsDevice gd)
         {
+            position = Game1._cameraPosition;
             if (player.GetHp() > 0)
             {
                 hpWidth = (player.GetHp() / MAX_HP) * MAX_HPBAR;

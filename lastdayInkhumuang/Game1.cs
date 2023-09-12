@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using MonoGame.Extended.ViewportAdapters;
+using MonoGame.Extended;
 
 namespace lastdayInkhumuang
 {
@@ -21,6 +23,15 @@ namespace lastdayInkhumuang
         public const int TILE_SIZE = 64;
         public const int MAP_WIDTH = 3200; //1600 * 2
         public const int MAP_HEIGHT = 1800; // 900 * 2
+
+        //Camera
+        public static OrthographicCamera _camera;
+        public static Vector2 _cameraPosition;
+        public static Vector2 _bgPosition;        
+
+        //Scenes
+        Level1Screen mLevel1;
+        Screen mCurrentScreen;
 
         //Player
         Player player;
@@ -48,15 +59,24 @@ namespace lastdayInkhumuang
             _graphics.PreferredBackBufferWidth = (int)MAP_WIDTH/3; //1066
             _graphics.ApplyChanges();
 
+            var viewportadapter = new BoxingViewportAdapter(Window, GraphicsDevice, MAP_WIDTH/3, MAP_HEIGHT/3);
+            _camera = new OrthographicCamera(viewportadapter);
+            _bgPosition = new Vector2(533, 300);
+
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            _cameraPosition = Vector2.Zero;
+            //Scenes
+            mLevel1 = new Level1Screen(this.Content, new EventHandler(Level1ScreenEvent));
+            mCurrentScreen = mLevel1;
+
             //Player
             player = new Player(this, new Vector2(0,0), 100, 100, 100, 10, 8, 8, 0.5f);
-            playerSkill = new PlayerSkills(this,Vector2.Zero, 4, 8, 4, 0.5f);
+            playerSkill = new PlayerSkills(this,Vector2.Zero, new Vector2(0,64), 4, 8, 4, 0.5f);
             playerAtkEfx = new PlayerAttackEffect(this, Vector2.Zero, 10, 8, 2, 0.6f);
             //Ui
             hpBar = new HealthBar(this, Vector2.Zero, 250, 30, 1);
@@ -64,6 +84,7 @@ namespace lastdayInkhumuang
 
             //Enemy
             gameObjects.Add(new Melee_Enemy(this, new Vector2(400, 200), Vector2.Zero, "Null", 125, 150, 5, 7, 4, 0.3f));
+            gameObjects.Add(new Melee_Enemy(this, new Vector2(400, 1500), Vector2.Zero, "Null", 125, 150, 5, 7, 4, 0.3f));
         }
 
         protected override void Update(GameTime gameTime)
@@ -100,7 +121,10 @@ namespace lastdayInkhumuang
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            _spriteBatch.Begin();            
+            var transformMatrix = _camera.GetViewMatrix();
+            _spriteBatch.Begin(transformMatrix: transformMatrix);
+            mCurrentScreen.Draw(_spriteBatch);
+
             foreach (GameObject gameObject in gameObjects)
             {
                 if (gameObject.IsEnable)
@@ -121,13 +145,16 @@ namespace lastdayInkhumuang
 
         protected void GamePlay(float elapsed)
         {
-            playerAtkEfx.Update(elapsed, player);
-            player.Update(ks, oldKs, ms, playerSkill, elapsed);
-            playerSkill.Update(elapsed, player, ks);
+            //camera
+            _camera.LookAt(_bgPosition + _cameraPosition);
+
+            //Player
+            player.Update(this, ks, oldKs, ms, playerSkill, elapsed);
+            playerSkill.Update(elapsed, player, ks, ms);
+            playerAtkEfx.Update(elapsed, player);                       
             staminaBar.Update(elapsed, player, GraphicsDevice);
             hpBar.Update(elapsed, player, GraphicsDevice);
             //ml_Enemy.Update(player, elapsed);
-
             
             foreach (GameObject gameObject in gameObjects)
             {
@@ -151,6 +178,24 @@ namespace lastdayInkhumuang
             player.Restart();
             Console.Clear();
             GAME_STATE = 0;
+        }
+
+        public void UpdateCamera(Vector2 move)
+        {
+            _cameraPosition += move;
+        }
+        public float GetCameraPosX()
+        {
+            return _cameraPosition.X;
+        }
+        public float GetCameraPosY()
+        {
+            return _cameraPosition.Y;
+        }
+
+        public void Level1ScreenEvent(object obj, EventArgs e)
+        {
+            mCurrentScreen = mLevel1;
         }
     }
 }

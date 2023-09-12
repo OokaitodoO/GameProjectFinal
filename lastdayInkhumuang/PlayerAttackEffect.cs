@@ -16,15 +16,14 @@ namespace lastdayInkhumuang
         {
             spriteTexture.Load(game.Content, "Player/Effect_Attack", frames, framesRow, framesPerSec);
         }
-
         public override Rectangle Bounds => new Rectangle((int)position.X, (int)position.Y, 128, 128);
         public Vector2 AtkPosition => position;
         public void Update(float elapsed, Player player)
         {
+
             attack = player.attacked;            
             position = player.GetPos();
-            //Console.WriteLine("Bounds {X : Y}" + Bounds.X + ":" + Bounds.Y);
-            //Console.WriteLine(dealDamage);
+            
             if (!attack)
             {
                 direction = player.GetDirection();
@@ -51,7 +50,6 @@ namespace lastdayInkhumuang
                 if (other.GetType().IsAssignableTo(typeof(Melee_Enemy)) && attack)
                 {
                     ((Melee_Enemy)other).GotDamage(10);
-                    Console.WriteLine("Ahhhhh");
                 }
             }
         }

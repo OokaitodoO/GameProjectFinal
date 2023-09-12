@@ -117,7 +117,8 @@ namespace lastdayInkhumuang
                         if (position.Y + 55 > player.GetPos().Y) //Up
                         {
                             position.Y -= speed;
-                        }
+                        } 
+
                     }
                 }
 

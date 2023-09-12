@@ -11,7 +11,7 @@ namespace lastdayInkhumuang
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         //private GraphicsDevice _graphicDevice;
-
+        //TestCommit
         public static int GAME_STATE = 0; // 0: In game | 1: Die
 
         KeyboardState ks = new KeyboardState();

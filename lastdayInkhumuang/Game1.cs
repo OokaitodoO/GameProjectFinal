@@ -15,6 +15,7 @@ namespace lastdayInkhumuang
         //private GraphicsDevice _graphicDevice;
         //TestCommit
         public static int GAME_STATE = 0; // 0: In game | 1: Die
+        public static bool LOCK_CAM;
 
         KeyboardState ks = new KeyboardState();
         KeyboardState oldKs = new KeyboardState();
@@ -27,25 +28,30 @@ namespace lastdayInkhumuang
         //Camera
         public static OrthographicCamera _camera;
         public static Vector2 _cameraPosition;
-        public static Vector2 _bgPosition;        
+        public static Vector2 _bgPosition;
 
         //Scenes
-        Level1Screen mLevel1;
-        Screen mCurrentScreen;
+        public string Map;
+        public Level1Screen mLevel1;
+        public Level2Screen mLevel2;
+        public SceneBoss mBoss1;
+        public Screen mCurrentScreen;
+        public Screen oldScreen;
 
         //Player
-        Player player;
-        PlayerSkills playerSkill;
-        PlayerAttackEffect playerAtkEfx;
+        public Player player;
+        public PlayerSkills playerSkill;
+        public PlayerAttackEffect playerAtkEfx;
+
         //Ui
         HealthBar hpBar;
         StaminaBar staminaBar;
 
         //Enemy
-        //Melee_Enemy ml_Enemy;
+        public static int monsterCount;
 
         //List
-        List<GameObject> gameObjects= new List<GameObject>();
+        //List<GameObject> gameObjects= new List<GameObject>();
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -69,13 +75,16 @@ namespace lastdayInkhumuang
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _cameraPosition = Vector2.Zero;
+            _cameraPosition = new Vector2(0, 1200);
             //Scenes
-            mLevel1 = new Level1Screen(this.Content, new EventHandler(Level1ScreenEvent));
+            mLevel1 = new Level1Screen(this, new EventHandler(Level1ScreenEvent));
+            mLevel2 = new Level2Screen(this.Content, new EventHandler(Level2ScreenEvent));
+            mBoss1 = new SceneBoss(this, new EventHandler(SceneBossScreenEvent));
             mCurrentScreen = mLevel1;
+            
 
             //Player
-            player = new Player(this, new Vector2(0,0), 100, 100, 100, 10, 8, 8, 0.5f);
+            player = new Player(this, new Vector2(0,1500), 100, 100, 100, 10, 8, 8, 0.5f);
             playerSkill = new PlayerSkills(this,Vector2.Zero, new Vector2(0,64), 4, 8, 4, 0.5f);
             playerAtkEfx = new PlayerAttackEffect(this, Vector2.Zero, 10, 8, 2, 0.6f);
             //Ui
@@ -83,7 +92,7 @@ namespace lastdayInkhumuang
             staminaBar = new StaminaBar(this, new Vector2(0f, 30), 200, 25, 1);
 
             //Enemy
-            gameObjects.Add(new Melee_Enemy(this, new Vector2(400, 200), Vector2.Zero, "Null", 125, 150, 5, 7, 5, 0.3f));
+            //gameObjects.Add(new Melee_Enemy(this, new Vector2(400, 200), Vector2.Zero, "Null", 125, 150, 5, 7, 5, 0.3f));
             //gameObjects.Add(new Melee_Enemy(this, new Vector2(400, 1500), Vector2.Zero, "Null", 125, 150, 5, 7, 5, 0.3f));
         }
 
@@ -95,6 +104,9 @@ namespace lastdayInkhumuang
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             ks = Keyboard.GetState();
             ms = Mouse.GetState();
+
+            //Scenes
+            mCurrentScreen.Update(gameTime, elapsed, player);
 
             switch (GAME_STATE)
             {
@@ -125,13 +137,13 @@ namespace lastdayInkhumuang
             _spriteBatch.Begin(transformMatrix: transformMatrix);
             mCurrentScreen.Draw(_spriteBatch);
 
-            foreach (GameObject gameObject in gameObjects)
-            {
-                if (gameObject.IsEnable)
-                {
-                    gameObject.Draw(_spriteBatch);
-                }
-            }
+            //foreach (GameObject gameObject in gameObjects)
+            //{
+            //    if (gameObject.IsEnable)
+            //    {
+            //        gameObject.Draw(_spriteBatch);
+            //    }
+            //}
             //ml_Enemy.Draw(_spriteBatch);
             player.Draw(_spriteBatch);
             playerSkill.Draw(_spriteBatch);
@@ -146,7 +158,11 @@ namespace lastdayInkhumuang
         protected void GamePlay(float elapsed)
         {
             //camera
-            _camera.LookAt(_bgPosition + _cameraPosition);
+            if (!LOCK_CAM)
+            {
+                _camera.LookAt(_bgPosition + _cameraPosition);
+            }
+                      
 
             //Player
             player.Update(this, ks, oldKs, ms, playerSkill, elapsed);
@@ -156,21 +172,21 @@ namespace lastdayInkhumuang
             hpBar.Update(elapsed, player, GraphicsDevice);
             //ml_Enemy.Update(player, elapsed);
             
-            foreach (GameObject gameObject in gameObjects)
-            {                
-                player.CheckColiision(gameObject, ((Melee_Enemy)gameObject).DealDamage());
-                playerAtkEfx.CheckColiision(gameObject);
-                playerSkill.CheckColiision(gameObject);
-                if (gameObject.GetType().IsAssignableTo(typeof(Melee_Enemy)))
-                {
-                    ((Melee_Enemy)gameObject).Update(player, elapsed);
-                    ((Melee_Enemy)gameObject).CheckColiision(player, playerAtkEfx, playerSkill, playerAtkEfx, playerSkill);                    
-                }
-                if (gameObject.GetType().IsAssignableTo(typeof(AnimatedObject)))
-                {
-                    ((AnimatedObject)gameObject).UpdateFrame(elapsed);
-                }
-            }
+            //foreach (GameObject gameObject in gameObjects)
+            //{                
+            //    //player.CheckColiision(gameObject, ((Melee_Enemy)gameObject).DealDamage());
+            //    //playerAtkEfx.CheckColiision(gameObject);
+            //    //playerSkill.CheckColiision(gameObject);
+            //    //if (gameObject.GetType().IsAssignableTo(typeof(Melee_Enemy)))
+            //    //{
+            //    //    ((Melee_Enemy)gameObject).Update(player, elapsed);
+            //    //    ((Melee_Enemy)gameObject).CheckColiision(player, playerAtkEfx, playerSkill, playerAtkEfx, playerSkill);                    
+            //    //}
+            //    //if (gameObject.GetType().IsAssignableTo(typeof(AnimatedObject)))
+            //    //{
+            //    //    ((AnimatedObject)gameObject).UpdateFrame(elapsed);
+            //    //}
+            //}
         }
 
         protected void Restart()
@@ -182,7 +198,10 @@ namespace lastdayInkhumuang
 
         public void UpdateCamera(Vector2 move)
         {
-            _cameraPosition += move;
+            if (!LOCK_CAM)
+            {
+                _cameraPosition += move;
+            }            
         }
         public float GetCameraPosX()
         {
@@ -195,7 +214,21 @@ namespace lastdayInkhumuang
 
         public void Level1ScreenEvent(object obj, EventArgs e)
         {
-            mCurrentScreen = mLevel1;
+            mCurrentScreen = mBoss1;
+            oldScreen = mLevel1;
+        }
+        public void Level2ScreenEvent(object obj, EventArgs e)
+        {
+            mCurrentScreen = mBoss1;
+            oldScreen = mLevel2;
+        }
+        public void SceneBossScreenEvent(object obj, EventArgs e)
+        {
+            if (oldScreen == mLevel1)
+            {
+                mCurrentScreen = mLevel2;
+            }
+            
         }
     }
 }

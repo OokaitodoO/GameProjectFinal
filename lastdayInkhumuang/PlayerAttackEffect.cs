@@ -51,6 +51,10 @@ namespace lastdayInkhumuang
                 {
                     ((Melee_Enemy)other).GotDamage(10);
                 }
+                if (other.GetType().IsAssignableTo(typeof(MiniBoss1)) && attack)
+                {
+                    ((MiniBoss1)other).GotDamage(100);
+                }
             }
         }
         public override void Draw(SpriteBatch spriteBatch)

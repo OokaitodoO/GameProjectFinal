@@ -9,14 +9,7 @@ using System.Threading.Tasks;
 namespace lastdayInkhumuang
 {
     internal class Melee_Enemy : Enemy, IGameFunction
-    {
-        int spriteRow;
-        bool flip;
-        float hp;
-        int damage;
-        bool Hitted;
-        bool alive;
-        float delayHitted;
+    {                                               
 
         const int KNOCKBACK = 100;
         const float REGEN_HP = 0.2f;
@@ -50,11 +43,7 @@ namespace lastdayInkhumuang
         public void Update(Player player, float elapsed)
         {
 
-            Console.WriteLine("Alive " + alive);
-            Console.WriteLine("Hitted " + Hitted);
-            Console.WriteLine("Attack " + attack);
-            Console.WriteLine("FrameRow " + spriteTexture.GetFrameRow());
-            Console.WriteLine("Outside " + (position == originPos));
+            
             //Check Alive
             if (alive)
             {
@@ -64,7 +53,8 @@ namespace lastdayInkhumuang
             if (hp <= 0 && alive)
             {                
                 spriteTexture.Reset();
-                alive = false;   
+                alive = false;
+                Game1.monsterCount--;
                 Hitted = false;
             }
             if (!alive)
@@ -151,10 +141,12 @@ namespace lastdayInkhumuang
                         if (position.Y + 55 < player.GetPos().Y) //Down
                         {
                             position.Y += speed;
+                            spriteRow = 1;
                         }
                         if (position.Y + 55 > player.GetPos().Y) //Up
                         {
                             position.Y -= speed;
+                            spriteRow = 1;
                         }
                     }
                 }
@@ -210,12 +202,7 @@ namespace lastdayInkhumuang
                 else
                 {
                     delayHitted = 0;
-                }
-
-                
-
-                //Tets
-                enable = true;
+                }                               
 
 
                 //attack
@@ -231,7 +218,7 @@ namespace lastdayInkhumuang
             }                        
         }
 
-        public void CheckColiision(GameObject player, GameObject playerAtk, GameObject playerSkill, PlayerAttackEffect gotAtk, PlayerSkills gotSkills)
+        public override void CheckColiision(GameObject player)
         {           
             if (player.Bounds.Intersects(this.Bounds))
             {
@@ -240,11 +227,11 @@ namespace lastdayInkhumuang
                         spriteRow = 3;
                         spriteTexture.Reset();
                         attack = true;                                        
-                }                
+                }                    
             }
         }
 
-        public void GotDamage(int damage)
+        public override void GotDamage(int damage)
         {
             if (alive)
             {
@@ -252,7 +239,10 @@ namespace lastdayInkhumuang
                 this.damage = damage;
             }            
         }
-
+        public bool GetAlive()
+        {
+            return alive;
+        }
         public override void UpdateFrame(float elapsed)
         {
             if (!Hitted && alive)

@@ -18,6 +18,13 @@ namespace lastdayInkhumuang
         protected bool attack;
         protected bool outSide;
         protected bool dealDamage;
+        protected float hp;
+        protected bool alive;
+        protected int spriteRow;
+        protected bool Hitted;
+        protected bool flip;
+        protected int damage;
+        protected float delayHitted;
 
         public const int RANGE_WIDTH = 600;
         public const int RANGE_HEIGHT = 600;
@@ -27,6 +34,8 @@ namespace lastdayInkhumuang
         {
                       
         }
+
+        public virtual void GotDamage(int damage) { }
 
         public virtual void CheckColiision(GameObject other) { }
         public virtual bool DealDamage() { return dealDamage; }

@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace lastdayInkhumuang
 {
-    internal class Screen
+    public class Screen
     {
         protected EventHandler ScreenEvent;
         public Screen(EventHandler theScreenEvent)
         {
             ScreenEvent = theScreenEvent;
         }
-        public virtual void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime, float elapsed, Player player)
         {
 
         }

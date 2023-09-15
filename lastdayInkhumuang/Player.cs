@@ -48,13 +48,14 @@ namespace lastdayInkhumuang
         {
             
         }
+        
         public override Rectangle Bounds => new Rectangle((int)position.X + 50, (int)position.Y + 64, 28, 64); //player collision position(not yet conplete)
         public Vector2 Position => position;
-
+        
         public void Update(Game1 game,KeyboardState ks, KeyboardState oldKs, MouseState ms, PlayerSkills skill, float elapsed)
         {
             lastPos = position;
-            CheckDirection(ms);            
+            CheckDirection(ms);
             //Attack (not yet complete)
             if (stamina > 6)
             {
@@ -134,14 +135,14 @@ namespace lastdayInkhumuang
             //Movement
             if (!attacked && !skilled)
             {
-                if (ks.IsKeyDown(Keys.A) && Bounds.X > 0)//Left
+                if (ks.IsKeyDown(Keys.A) && Bounds.X > 0 && ks.IsKeyDown(Keys.A) && Bounds.X > 0)//Left
                 {
                     position.X -= speed;
                     SpriteRow = 2;
                     UpdateFrame(elapsed);                    
                     //direction = "Left";
                 }
-                else if (ks.IsKeyDown(Keys.D) && Bounds.X + 64 < Game1.MAP_WIDTH)
+                else if (ks.IsKeyDown(Keys.D) && Bounds.X + 64 < Game1.MAP_WIDTH && ks.IsKeyDown(Keys.D) && Bounds.X + 64 < game.GraphicsDevice.Viewport.Width + Game1._cameraPosition.X)
                 {
                     position.X += speed;
                     SpriteRow = 1;
@@ -154,7 +155,7 @@ namespace lastdayInkhumuang
                     SpriteRow = 5;
                     UpdateFrame(elapsed);
                 }
-                else if (ks.IsKeyDown(Keys.S) && Bounds.Y + 64 < Game1.MAP_HEIGHT)
+                else if (ks.IsKeyDown(Keys.S) && Bounds.Y + 64 < Game1.MAP_HEIGHT && ks.IsKeyDown(Keys.S) && Bounds.Y + 64 < game.GraphicsDevice.Viewport.Height + Game1._cameraPosition.Y)
                 {
                     position.Y += speed;
                     SpriteRow = 6;
@@ -241,7 +242,10 @@ namespace lastdayInkhumuang
 
 
         }
-
+        public void SetPos(Vector2 pos)
+        {
+            position = pos;
+        }
         public void CheckColiision(GameObject other, bool dealDamage)
         {
             if (other.Bounds.Intersects(this.Bounds))
@@ -249,6 +253,17 @@ namespace lastdayInkhumuang
                 if (other.GetType().IsAssignableTo(typeof(Melee_Enemy)) && dealDamage)
                 {
                     hp -= 5;
+                }
+                if (other.GetType().IsAssignableTo(typeof(MiniBoss1)) && dealDamage)
+                {
+                    if (((MiniBoss1)other).GetSpear())
+                    {
+                        hp -= 30;
+                    }
+                    else
+                    {
+                        hp -= 15;
+                    }
                 }
             }
         }

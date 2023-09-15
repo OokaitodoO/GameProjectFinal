@@ -33,11 +33,7 @@ namespace lastdayInkhumuang
         public Vector2 SkillPosition => position;
 
         public void Update(float elapsed, Player player, KeyboardState ks, MouseState ms)
-        {
-            Console.WriteLine("dX: " + dx);
-            Console.WriteLine("dY: " + dy);
-            Console.WriteLine("Rotatio: "+spriteTexture.Rotation);
-            Console.WriteLine("Mouse: "+ms.Position);
+        {            
             if (ks.IsKeyDown(Keys.E) && !skilled)
             {
                 skilled = true;

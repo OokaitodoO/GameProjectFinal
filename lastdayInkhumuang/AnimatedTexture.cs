@@ -218,5 +218,10 @@ namespace lastdayInkhumuang
         {
             return Frame;
         }
+
+        public int GetFrameRow()
+        {
+            return startrow;
+        }
     }
 }

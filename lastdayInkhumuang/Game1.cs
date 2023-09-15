@@ -83,8 +83,8 @@ namespace lastdayInkhumuang
             staminaBar = new StaminaBar(this, new Vector2(0f, 30), 200, 25, 1);
 
             //Enemy
-            gameObjects.Add(new Melee_Enemy(this, new Vector2(400, 200), Vector2.Zero, "Null", 125, 150, 5, 7, 4, 0.3f));
-            gameObjects.Add(new Melee_Enemy(this, new Vector2(400, 1500), Vector2.Zero, "Null", 125, 150, 5, 7, 4, 0.3f));
+            gameObjects.Add(new Melee_Enemy(this, new Vector2(400, 200), Vector2.Zero, "Null", 125, 150, 5, 7, 5, 0.3f));
+            //gameObjects.Add(new Melee_Enemy(this, new Vector2(400, 1500), Vector2.Zero, "Null", 125, 150, 5, 7, 5, 0.3f));
         }
 
         protected override void Update(GameTime gameTime)
@@ -157,18 +157,18 @@ namespace lastdayInkhumuang
             //ml_Enemy.Update(player, elapsed);
             
             foreach (GameObject gameObject in gameObjects)
-            {
-                if (gameObject.GetType().IsAssignableTo(typeof(AnimatedObject)))
-                {
-                    ((AnimatedObject)gameObject).UpdateFrame(elapsed);
-                }
+            {                
                 player.CheckColiision(gameObject, ((Melee_Enemy)gameObject).DealDamage());
                 playerAtkEfx.CheckColiision(gameObject);
                 playerSkill.CheckColiision(gameObject);
                 if (gameObject.GetType().IsAssignableTo(typeof(Melee_Enemy)))
-                {                    
-                    ((Melee_Enemy)gameObject).Update(player, elapsed);                    
-                    ((Melee_Enemy)gameObject).CheckColiision(player, playerAtkEfx, playerSkill, playerAtkEfx, playerSkill);                   
+                {
+                    ((Melee_Enemy)gameObject).Update(player, elapsed);
+                    ((Melee_Enemy)gameObject).CheckColiision(player, playerAtkEfx, playerSkill, playerAtkEfx, playerSkill);                    
+                }
+                if (gameObject.GetType().IsAssignableTo(typeof(AnimatedObject)))
+                {
+                    ((AnimatedObject)gameObject).UpdateFrame(elapsed);
                 }
             }
         }

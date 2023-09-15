@@ -24,7 +24,7 @@ namespace lastdayInkhumuang
         //const int SIZE_WIDTH = 150;
         public Melee_Enemy(Game1 game, Vector2 position, Vector2 tileLocation, string element, int boundHeight, int boundWidth, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, tileLocation, boundHeight, boundWidth, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
         {
-            spriteTexture.Load(game.Content, "Enemy/Monster_Sword", frames, framesRow, framesPerSec);
+            spriteTexture.Load(game.Content, "Enemy/Monster_Sword_all", frames, framesRow, framesPerSec);
             this.boundHeight= boundHeight;
             this.boundWidth= boundWidth;
             hp = 100;
@@ -43,14 +43,18 @@ namespace lastdayInkhumuang
             //rangePos = originPos;
         }
 
-        public override Rectangle Bounds => new Rectangle((int)position.X, (int)position.Y, 150, 180); //player collision position(not yet conplete)
+        public override Rectangle Bounds => new Rectangle((int)position.X, (int)position.Y+90, 150, 90); //player collision position(not yet conplete)
 
         public Vector2 Position => position;
 
         public void Update(Player player, float elapsed)
         {
-                    
-            
+
+            Console.WriteLine("Alive " + alive);
+            Console.WriteLine("Hitted " + Hitted);
+            Console.WriteLine("Attack " + attack);
+            Console.WriteLine("FrameRow " + spriteTexture.GetFrameRow());
+            Console.WriteLine("Outside " + (position == originPos));
             //Check Alive
             if (alive)
             {
@@ -60,19 +64,25 @@ namespace lastdayInkhumuang
             if (hp <= 0 && alive)
             {                
                 spriteTexture.Reset();
-                alive = false;
+                alive = false;   
+                Hitted = false;
             }
             if (!alive)
-            {
-                spriteRow = 3;
+            {                
+                spriteRow = 4;
                 if (spriteTexture.GetFrame() == 3)
                 {
-                    spriteTexture.Pause(4, spriteRow);
+                    spriteTexture.Pause(4, 4);
                 }
             }
 
             if (alive)
             {
+                //Check player
+                if (player.Bounds.X > rangePos.X && player.Bounds.X < rangePos.X + RANGE_WIDTH - boundWidth && player.Bounds.Y > rangePos.Y && player.Bounds.Y < rangePos.Y + RANGE_HEIGHT - boundHeight)
+                {
+                    outSide = false;
+                }
                 //CheckRange
                 if (position.X > rangePos.X + RANGE_WIDTH - boundWidth) //Right
                 {
@@ -97,7 +107,10 @@ namespace lastdayInkhumuang
 
                 //Hitted                
                 if (Hitted && delayHitted == 0)
-                {
+                {                    
+                    spriteRow = 5;
+                    Hitted = true;
+                    spriteTexture.Reset();
                     hp -= damage;
                     if (player.GetPos().X + 64 < position.X + 90)
                     {
@@ -116,34 +129,23 @@ namespace lastdayInkhumuang
                         position.Y += KNOCKBACK;
                     }
                 }
-                if (Hitted)
-                {
-                    delayHitted += elapsed;
-                    if (delayHitted >= 1)
-                    {
-                        Hitted = false;
-                    }
-                }
-                else
-                {
-                    delayHitted = 0;
-                }
+               
 
                 //Follow player
-                if (!attack)
+                if (!attack && !Hitted)
                 {
                     if (!outSide)
                     {
                         if (position.X < player.GetPos().X) //Right
                         {
                             position.X += speed;
-                            spriteRow = 2;
+                            spriteRow = 1;
                             flip = false;
                         }
                         if (position.X > player.GetPos().X) //Left
                         {
                             position.X -= speed;
-                            spriteRow = 2;
+                            spriteRow = 1;
                             flip = true;
                         }
                         if (position.Y + 55 < player.GetPos().Y) //Down
@@ -182,6 +184,7 @@ namespace lastdayInkhumuang
                     }
                     if (position == originPos)
                     {
+                        spriteRow = 2;
                         if (hp < 100)
                         {
                             hp += REGEN_HP;
@@ -194,11 +197,22 @@ namespace lastdayInkhumuang
                     speedToOriginPos = 0;
                 }
 
-                //Check player
-                if (player.GetPos().X > rangePos.X && player.GetPos().X < rangePos.X + RANGE_WIDTH - boundWidth && player.GetPos().Y > rangePos.Y && player.GetPos().Y < rangePos.Y + RANGE_HEIGHT - boundHeight)
+                //hitcooldown
+                if (Hitted)
                 {
-                    outSide = false;
+                    attack = false;
+                    delayHitted += elapsed;
+                    if (delayHitted >= 1)
+                    {
+                        Hitted = false;
+                    }
                 }
+                else
+                {
+                    delayHitted = 0;
+                }
+
+                
 
                 //Tets
                 enable = true;
@@ -213,7 +227,7 @@ namespace lastdayInkhumuang
                 else
                 {
                     dealDamage = false;
-                }                
+                }
             }                        
         }
 
@@ -222,27 +236,33 @@ namespace lastdayInkhumuang
             if (player.Bounds.Intersects(this.Bounds))
             {
                 if (player.GetType().IsAssignableTo(typeof(Player)) && !attack && alive)
-                {
-                    spriteRow = 1;
-                    spriteTexture.Reset();
-                    attack = true;
+                {                    
+                        spriteRow = 3;
+                        spriteTexture.Reset();
+                        attack = true;                                        
                 }                
-            }
-            else if (!player.Bounds.Intersects(this.Bounds) && alive)
-            {
-                spriteRow = 2;
             }
         }
 
         public void GotDamage(int damage)
         {
-            Hitted = true;
-            this.damage = damage;
+            if (alive)
+            {
+                Hitted = true;
+                this.damage = damage;
+            }            
         }
 
         public override void UpdateFrame(float elapsed)
         {
-            spriteTexture.UpdateFrame(elapsed);         
+            if (!Hitted && alive)
+            {
+                spriteTexture.UpdateFrame(elapsed);
+            }
+            if (!alive && !Hitted)
+            {                
+                spriteTexture.UpdateFrame(elapsed);
+            }            
         }
 
         public override void Draw(SpriteBatch spriteBatch)

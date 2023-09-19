@@ -21,8 +21,9 @@ namespace lastdayInkhumuang
         {
             Level1 = game.Content.Load<Texture2D>("Scenes/1st_Level");
             mapClear = false;
-            
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(400, 200), Vector2.Zero, "Null", 125, 150, 5, 7, 5, 0.3f));
+            //rasengan = new Rasengan(game, 25, 25, 0.5f);
+            Enemy.Add(new Melee_Enemy(game, new Vector2(800, 600), Vector2.Zero, 90, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Range_Enemy(game, new Vector2(800, 400), Vector2.Zero, 90, 150, 5, 7, 5, 0.3f));
             //Enemy.Add(new Melee_Enemy(game, new Vector2(800, 200), Vector2.Zero, "Null", 125, 150, 5, 7, 5, 0.3f));
             //Enemy.Add(new Melee_Enemy(game, new Vector2(1200, 200), Vector2.Zero, "Null", 125, 150, 5, 7, 5, 0.3f));
             Game1.monsterCount = Enemy.Count;
@@ -45,9 +46,10 @@ namespace lastdayInkhumuang
 
                 foreach (GameObject gameObject in Enemy)
                 {
-                    game.player.CheckColiision(gameObject, ((Melee_Enemy)gameObject).DealDamage());
+                    Console.WriteLine(((Enemy)gameObject).DealDamage());
+                    game.player.CheckColiision(gameObject, ((Enemy)gameObject).DealDamage());
                     game.playerAtkEfx.CheckColiision(gameObject);
-                    game.playerSkill.CheckColiision(gameObject);
+                    game.playerSkill.CheckColiision(gameObject);                    
                     if (gameObject.GetType().IsAssignableTo(typeof(Melee_Enemy)))
                     {
                         ((Melee_Enemy)gameObject).Update(game.player, elapsed);
@@ -57,6 +59,16 @@ namespace lastdayInkhumuang
                     {
                         ((Melee_Enemy)gameObject).UpdateFrame(elapsed);
                     }
+                    if (gameObject.GetType().IsAssignableTo(typeof(Range_Enemy)))
+                    {
+                        ((Range_Enemy)gameObject).Update(game.player, elapsed);
+                        ((Range_Enemy)gameObject).CheckColiision(game.player);
+                        //rasengan.Update(elapsed, player, (Range_Enemy)gameObject);
+                    }                    
+                    if (gameObject.GetType().IsAssignableTo(typeof(Range_Enemy)))
+                    {
+                        ((Range_Enemy)gameObject).UpdateFrame(elapsed);
+                    }
                 }                
             }                      
         }
@@ -65,7 +77,15 @@ namespace lastdayInkhumuang
             spriteBatch.Draw(Level1, Vector2.Zero, Color.White);
             foreach (GameObject gameObject in Enemy)
             {
-                ((Melee_Enemy)gameObject).Draw(spriteBatch);
+                if (gameObject.GetType().IsAssignableTo(typeof(Range_Enemy)))
+                {
+                    ((Range_Enemy)gameObject).Draw(spriteBatch);
+                }
+                if (gameObject.GetType().IsAssignableTo(typeof(Melee_Enemy)))
+                {
+                    ((Melee_Enemy)gameObject).Draw(spriteBatch);
+                }                
+
             }
             base.Draw(spriteBatch);
         }

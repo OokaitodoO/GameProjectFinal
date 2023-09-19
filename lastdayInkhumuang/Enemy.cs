@@ -14,7 +14,6 @@ namespace lastdayInkhumuang
         protected Vector2 rangePos;
         protected int speed;
         protected int speedToOriginPos;
-        protected string element;
         protected bool attack;
         protected bool outSide;
         protected bool dealDamage;

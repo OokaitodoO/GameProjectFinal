@@ -49,11 +49,15 @@ namespace lastdayInkhumuang
             {
                 if (other.GetType().IsAssignableTo(typeof(Melee_Enemy)) && attack)
                 {
-                    ((Melee_Enemy)other).GotDamage(10);
+                    ((Melee_Enemy)other).GotDamage(20);
+                }
+                if (other.GetType().IsAssignableTo(typeof(Range_Enemy)) && attack)
+                {
+                    ((Range_Enemy)other).GotDamage(20);
                 }
                 if (other.GetType().IsAssignableTo(typeof(MiniBoss1)) && attack)
                 {
-                    ((MiniBoss1)other).GotDamage(100);
+                    ((MiniBoss1)other).GotDamage(15);
                 }
             }
         }

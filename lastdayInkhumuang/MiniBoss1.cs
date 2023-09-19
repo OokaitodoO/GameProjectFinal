@@ -19,7 +19,7 @@ namespace lastdayInkhumuang
         Game1 game;
         public MiniBoss1(Game1 game, Vector2 position, int boundHeight, int boundWidth, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, Vector2.Zero, boundHeight, boundWidth, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
         {
-            spriteTexture.Load(game.Content, "Boss/Dullahahitn", 1, 1, 8);
+            spriteTexture.Load(game.Content, "Boss/Dullahahitn", frames, framesRow, framesPerSec);
             speed = 2;
             alive = true;
             hp = 500;

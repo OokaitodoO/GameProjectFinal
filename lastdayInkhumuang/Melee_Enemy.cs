@@ -15,7 +15,7 @@ namespace lastdayInkhumuang
         const float REGEN_HP = 0.2f;
         //const int SIZE_HEIGHT = 180;
         //const int SIZE_WIDTH = 150;
-        public Melee_Enemy(Game1 game, Vector2 position, Vector2 tileLocation, string element, int boundHeight, int boundWidth, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, tileLocation, boundHeight, boundWidth, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
+        public Melee_Enemy(Game1 game, Vector2 position, Vector2 tileLocation, int boundHeight, int boundWidth, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, tileLocation, boundHeight, boundWidth, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
         {
             spriteTexture.Load(game.Content, "Enemy/Monster_Sword_all", frames, framesRow, framesPerSec);
             this.boundHeight= boundHeight;
@@ -23,9 +23,8 @@ namespace lastdayInkhumuang
             hp = 100;
             speed = 2;
             speedToOriginPos = 2;
-            this.element = element;
             originPos = position;
-            this.position = originPos;
+            this.position = originPos - new Vector2(0 , boundHeight/2);
             attack = false;
             outSide = false;
             flip = false;
@@ -42,7 +41,6 @@ namespace lastdayInkhumuang
 
         public void Update(Player player, float elapsed)
         {
-
             
             //Check Alive
             if (alive)
@@ -69,7 +67,7 @@ namespace lastdayInkhumuang
             if (alive)
             {
                 //Check player
-                if (player.Bounds.X > rangePos.X && player.Bounds.X < rangePos.X + RANGE_WIDTH - boundWidth && player.Bounds.Y > rangePos.Y && player.Bounds.Y < rangePos.Y + RANGE_HEIGHT - boundHeight)
+                if (player.Bounds.X + 28 > rangePos.X && player.Bounds.X < rangePos.X + RANGE_WIDTH + boundWidth/2 && player.Bounds.Y > rangePos.Y && player.Bounds.Y < rangePos.Y + RANGE_HEIGHT - boundHeight)
                 {
                     outSide = false;
                 }
@@ -166,15 +164,15 @@ namespace lastdayInkhumuang
                         position.X -= speedToOriginPos;
                         flip = true;
                     }
-                    if (position.Y < originPos.Y) //down
+                    if (position.Y + boundHeight / 2< originPos.Y) //down
                     {
                         position.Y += speedToOriginPos;
                     }
-                    if (position.Y > originPos.Y) //up
+                    if (position.Y + boundHeight / 2 > originPos.Y) //up
                     {
                         position.Y -= speedToOriginPos;
                     }
-                    if (position == originPos)
+                    if (position + new Vector2(0 , boundHeight / 2) == originPos)
                     {
                         spriteRow = 2;
                         if (hp < 100)

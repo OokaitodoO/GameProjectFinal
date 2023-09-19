@@ -248,12 +248,19 @@ namespace lastdayInkhumuang
         }
         public void CheckColiision(GameObject other, bool dealDamage)
         {
+            if (other.GetType().IsAssignableTo(typeof(Range_Enemy)))
+            {
+                if (((Range_Enemy)other).Rasengan().Intersects(this.Bounds) && dealDamage)
+                {
+                    hp -= 5;
+                }
+            }
             if (other.Bounds.Intersects(this.Bounds))
             {
                 if (other.GetType().IsAssignableTo(typeof(Melee_Enemy)) && dealDamage)
                 {
                     hp -= 5;
-                }
+                }                
                 if (other.GetType().IsAssignableTo(typeof(MiniBoss1)) && dealDamage)
                 {
                     if (((MiniBoss1)other).GetSpear())

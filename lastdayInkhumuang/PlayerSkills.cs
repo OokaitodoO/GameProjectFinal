@@ -133,6 +133,10 @@ namespace lastdayInkhumuang
                 {
                     ((Melee_Enemy)other).GotDamage(65);
                 }
+                if (other.GetType().IsAssignableTo(typeof(Range_Enemy)) && released)
+                {
+                    ((Range_Enemy)other).GotDamage(65);
+                }
                 if (other.GetType().IsAssignableTo(typeof(MiniBoss1)) && released)
                 {
                     ((MiniBoss1)other).GotDamage(65);

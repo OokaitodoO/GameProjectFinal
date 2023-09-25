@@ -14,6 +14,7 @@ namespace lastdayInkhumuang
     {
         Texture2D Level1;
         List<GameObject> Enemy = new List<GameObject>();
+        public static List<BoundsCheck> Bounds = new List<BoundsCheck>();
         Game1 game;
 
         bool mapClear;
@@ -22,10 +23,24 @@ namespace lastdayInkhumuang
             Level1 = game.Content.Load<Texture2D>("Scenes/1st_Level");
             mapClear = false;
             //rasengan = new Rasengan(game, 25, 25, 0.5f);
-            Enemy.Add(new Melee_Enemy(game, new Vector2(800, 600), Vector2.Zero, 90, 150, 5, 7, 5, 0.3f));
-            Enemy.Add(new Range_Enemy(game, new Vector2(800, 400), Vector2.Zero, 90, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(800,400), Vector2.Zero, 90, 150, 5, 7, 5, 0.3f));
+            //Enemy.Add(new Range_Enemy(game, new Vector2(800, 400), Vector2.Zero, 90, 150, 5, 7, 5, 0.3f));
             //Enemy.Add(new Melee_Enemy(game, new Vector2(800, 200), Vector2.Zero, "Null", 125, 150, 5, 7, 5, 0.3f));
             //Enemy.Add(new Melee_Enemy(game, new Vector2(1200, 200), Vector2.Zero, "Null", 125, 150, 5, 7, 5, 0.3f));
+
+            //Bounds
+            Bounds.Add(new BoundsCheck(game, new Vector2(0, Game1.TILE_SIZE*9), Game1.TILE_SIZE*2, Game1.TILE_SIZE*20));
+            Bounds.Add(new BoundsCheck(game, new Vector2(0, Game1.TILE_SIZE * 5), Game1.TILE_SIZE * 4, Game1.TILE_SIZE * 4));
+            Bounds.Add(new BoundsCheck(game, new Vector2(0, 0), Game1.TILE_SIZE * 5, Game1.TILE_SIZE));
+            Bounds.Add(new BoundsCheck(game, new Vector2(0, 0), Game1.TILE_SIZE, Game1.TILE_SIZE * 25));
+            Bounds.Add(new BoundsCheck(game, new Vector2(Game1.TILE_SIZE * 24, Game1.TILE_SIZE * 4), Game1.TILE_SIZE * 11, Game1.TILE_SIZE));
+            Bounds.Add(new BoundsCheck(game, new Vector2(Game1.TILE_SIZE * 6, Game1.TILE_SIZE * 5), Game1.TILE_SIZE * 2, Game1.TILE_SIZE * 18));
+            //BoundsOutMap
+            Bounds.Add(new BoundsCheck(game, new Vector2(-(Game1.TILE_SIZE * 2), 0), Game1.TILE_SIZE * 15, Game1.TILE_SIZE * 2));
+            Bounds.Add(new BoundsCheck(game, new Vector2((Game1.TILE_SIZE * 25), 0), Game1.TILE_SIZE * 15, Game1.TILE_SIZE * 2));
+            Bounds.Add(new BoundsCheck(game, new Vector2(0, -(Game1.TILE_SIZE * 2)), Game1.TILE_SIZE * 2, Game1.TILE_SIZE * 25));
+            Bounds.Add(new BoundsCheck(game, new Vector2(0, (Game1.TILE_SIZE * 14)), Game1.TILE_SIZE * 2, Game1.TILE_SIZE * 25));
+
             Game1.monsterCount = Enemy.Count;
             this.game= game;
         }
@@ -46,7 +61,6 @@ namespace lastdayInkhumuang
 
                 foreach (GameObject gameObject in Enemy)
                 {
-                    Console.WriteLine(((Enemy)gameObject).DealDamage());
                     game.player.CheckColiision(gameObject, ((Enemy)gameObject).DealDamage());
                     game.playerAtkEfx.CheckColiision(gameObject);
                     game.playerSkill.CheckColiision(gameObject);                    
@@ -63,13 +77,23 @@ namespace lastdayInkhumuang
                     {
                         ((Range_Enemy)gameObject).Update(game.player, elapsed);
                         ((Range_Enemy)gameObject).CheckColiision(game.player);
-                        //rasengan.Update(elapsed, player, (Range_Enemy)gameObject);
                     }                    
                     if (gameObject.GetType().IsAssignableTo(typeof(Range_Enemy)))
                     {
                         ((Range_Enemy)gameObject).UpdateFrame(elapsed);
                     }
-                }                
+                }
+                foreach (BoundsCheck bounds in Level1Screen.Bounds)
+                {
+                    player.CheckMapColiision(bounds);
+                    foreach (GameObject gameObject in Enemy)
+                    {
+                        if (gameObject.GetType().IsAssignableTo(typeof(Melee_Enemy)))
+                        {
+                            ((Melee_Enemy)gameObject).CheckMapColiision(bounds);
+                        }
+                    }
+                }
             }                      
         }
         public override void Draw(SpriteBatch spriteBatch)

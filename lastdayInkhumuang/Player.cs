@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,13 +11,16 @@ using System.Threading.Tasks;
 namespace lastdayInkhumuang
 {
     public class Player : AnimatedObject, IGameFunction
-    {
+    {        
         int SpriteRow;
         Vector2 startPos;
         Vector2 lastPos;
         protected Vector2 origin;
-        int speed;
+        int SPEED = 8;
         public bool attacked;
+        float timerAtk;
+        int comboCount;
+        bool chainCombo;
         protected bool skilled;
         bool dash;
         const int WIDTH = 128;
@@ -29,12 +33,14 @@ namespace lastdayInkhumuang
         float mana;
         protected bool dealDamage;
 
+        bool flip;
+        bool boundMap;
+        bool move;
 
         public Player(Game1 game, Vector2 position, float hp, float stamina, float mana, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, Vector2.Zero, 128, 128, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
         {
-            spriteTexture.Load(game.Content, "Player/Player_all_set", frames, framesRow, framesPerSec);
-            SpriteRow = 7;
-            speed = 8;
+            spriteTexture.Load(game.Content, "Player/player_all_set_", frames, framesRow, framesPerSec);
+            SpriteRow = 13;
             this.hp = hp;
             this.stamina = stamina;
             this.mana = mana;
@@ -57,39 +63,7 @@ namespace lastdayInkhumuang
             lastPos = position;
             CheckDirection(ms);
             //Attack (not yet complete)
-            if (stamina > 6)
-            {
-                if (ms.LeftButton == ButtonState.Pressed && !attacked)
-                {
-                    spriteTexture.Reset();
-                    attacked = true;
-                    stamina -= 5;
-                    if (direction == "Right")
-                    {
-                        SpriteRow = 3;
-                    }
-                    if (direction == "Left")
-                    {
-                        SpriteRow = 4;
-                    }
-                    //if (direction == "Up")
-                    //{
-
-                    //}
-                    //if (direction == "Down")
-                    //{
-
-                    //}
-                }
-            }
-            if (attacked)
-            {
-                spriteTexture.UpdateFrame(elapsed);
-                if (spriteTexture.GetFrame() == 8)
-                {
-                    attacked= false;
-                }
-            }
+            ComboAttack(ms, elapsed);
 
             //Skill
             if (ks.IsKeyDown(Keys.E) && !skilled && !skill.GetSkilled())
@@ -98,9 +72,19 @@ namespace lastdayInkhumuang
                 skilled = true;
                 if (direction == "Right")
                 {
-                    SpriteRow = 3;
+                    SpriteRow = 7;
+                    flip = false;
                 }
                 if (direction == "Left")
+                {
+                    SpriteRow = 7;
+                    flip = true;
+                }
+                if (direction == "Up")
+                {
+                    SpriteRow = 1;
+                }
+                if (direction == "Down")
                 {
                     SpriteRow = 4;
                 }
@@ -108,83 +92,149 @@ namespace lastdayInkhumuang
             if (skilled)
             {
                 spriteTexture.UpdateFrame(elapsed);
+                if (spriteTexture.GetFrame() == 4)
+                {
+                    skilled = false;
+                }
             }
 
             //Right
             if (Bounds.X - game.GetCameraPosX() >= 600 && game.GetCameraPosX() < Game1.MAP_WIDTH - (Game1.MAP_WIDTH / 3)) 
             {
-                game.UpdateCamera(new Vector2(speed, 0f));
+                game.UpdateCamera(new Vector2(SPEED, 0f));
             }
             //Left
             if (Bounds.X - game.GetCameraPosX() <= 450 && game.GetCameraPosX() > 0)
             {
-                game.UpdateCamera(new Vector2(-speed, 0f));
+                game.UpdateCamera(new Vector2(-SPEED, 0f));
             }
             //Up
             if (Bounds.Y - game.GetCameraPosY() <= 250 && game.GetCameraPosY() > 0)
             {
-                game.UpdateCamera(new Vector2(0f, -speed));
+                game.UpdateCamera(new Vector2(0f, -SPEED));
             }
             //Down
             if (Bounds.Y - game.GetCameraPosY() >= 450 && game.GetCameraPosY() < Game1.MAP_HEIGHT - (Game1.MAP_HEIGHT / 3))
             {
-                game.UpdateCamera(new Vector2(0f, speed));
+                game.UpdateCamera(new Vector2(0f, SPEED));
             }
 
 
             //Movement
-            if (!attacked && !skilled)
+            /*if (!attacked && !skilled)
             {
-                if (ks.IsKeyDown(Keys.A) && Bounds.X > 0 && ks.IsKeyDown(Keys.A) && Bounds.X > 0)//Left
+                if (ks.IsKeyDown(Keys.A) && Bounds.X > 0)//Left
                 {
-                    position.X -= speed;
-                    SpriteRow = 2;
-                    UpdateFrame(elapsed);                    
-                    //direction = "Left";
+                    move = true;
+                    position.X -= 8;
+                    SpriteRow = 12;
+                    flip = true;
+                    UpdateFrame(elapsed);
                 }
                 else if (ks.IsKeyDown(Keys.D) && Bounds.X + 64 < Game1.MAP_WIDTH && ks.IsKeyDown(Keys.D) && Bounds.X + 64 < game.GraphicsDevice.Viewport.Width + Game1._cameraPosition.X)
                 {
-                    position.X += speed;
-                    SpriteRow = 1;
+                    move = true;
+                    position.X += 8;
+                    SpriteRow = 12;
+                    flip = false;
                     UpdateFrame(elapsed);
-                    //direction = "Right";
                 }
                 if (ks.IsKeyDown(Keys.W) && Bounds.Y > 0)
                 {
-                    position.Y -= speed;
-                    SpriteRow = 5;
+                    move = true;
+                    position.Y -= 8;
+                    SpriteRow = 10;
+                    flip = false;
                     UpdateFrame(elapsed);
                 }
                 else if (ks.IsKeyDown(Keys.S) && Bounds.Y + 64 < Game1.MAP_HEIGHT && ks.IsKeyDown(Keys.S) && Bounds.Y + 64 < game.GraphicsDevice.Viewport.Height + Game1._cameraPosition.Y)
                 {
-                    position.Y += speed;
-                    SpriteRow = 6;
+                    move = true;
+                    position.Y += 8;
+                    SpriteRow = 11;
+                    flip = false;
+                    UpdateFrame(elapsed);
+                }
+            }*/
+            if (!attacked && !skilled)
+            {
+                if (ks.IsKeyDown(Keys.A))//Left
+                {
+                    move = true;
+                    position.X -= 8;
+                    SpriteRow = 12;
+                    flip = true;
+                    UpdateFrame(elapsed);
+                }
+                else if (ks.IsKeyDown(Keys.D))
+                {
+                    move = true;
+                    position.X += 8;
+                    SpriteRow = 12;
+                    flip = false;
+                    UpdateFrame(elapsed);
+                }
+                if (ks.IsKeyDown(Keys.W))
+                {
+                    move = true;
+                    position.Y -= 8;
+                    SpriteRow = 10;
+                    flip = false;
+                    UpdateFrame(elapsed);
+                }
+                else if (ks.IsKeyDown(Keys.S))
+                {
+                    move = true;
+                    position.Y += 8;
+                    SpriteRow = 11;
+                    flip = false;
                     UpdateFrame(elapsed);
                 }
                 if (ks.IsKeyUp(Keys.W) && ks.IsKeyUp(Keys.A) && ks.IsKeyUp(Keys.S) && ks.IsKeyUp(Keys.D))
                 {
+                    move = false;
                     if (direction == "Left")
                     {
-                        SpriteRow = 8;
+                        SpriteRow = 13;
+                        flip = true;
                         UpdateFrame(elapsed);
                     }
                     else if (direction == "Right")
                     {
-                        SpriteRow = 7;
+                        SpriteRow = 13;
+                        flip = false;
                         UpdateFrame(elapsed);
                     }
-                    if (SpriteRow == 2 || SpriteRow == 8 && (direction == "Up" || direction == "Down"))
+                    if ((SpriteRow == 12 && flip) || (SpriteRow == 13 && flip) && (direction == "Up" || direction == "Down")) //Left
                     {
-                        SpriteRow = 8;
+                        SpriteRow = 13;
+                        flip = true;
                         UpdateFrame(elapsed);
                     }
-                    else if (SpriteRow == 1 || SpriteRow == 7 && (direction == "Up" || direction == "Down"))
+                    else if ((SpriteRow == 12 && !flip) || (SpriteRow == 13 && !flip) && (direction == "Up" || direction == "Down")) //Right
                     {
-                        SpriteRow = 7;
+                        SpriteRow = 13;
+                        flip = false;
+                        UpdateFrame(elapsed);
+                    }
+                    if (SpriteRow == 10 || SpriteRow == 11)
+                    {
+                        SpriteRow = 13;
+                        UpdateFrame(elapsed);
+                    }
+                    if ((SpriteRow == 1) || (SpriteRow == 2) || SpriteRow == 3)
+                    {
+                        SpriteRow = 13;
+                        UpdateFrame(elapsed);
+                    }
+                    else if ((SpriteRow == 4) || (SpriteRow == 5) || SpriteRow == 6)
+                    {
+                        SpriteRow = 13;
                         UpdateFrame(elapsed);
                     }
                 }
             }
+            
 
             //Dash
             if (ks.IsKeyDown(Keys.LeftShift) && oldKs.IsKeyUp(Keys.LeftShift) && !dash)
@@ -238,10 +288,138 @@ namespace lastdayInkhumuang
             {
                 stamina += elapsed * 2;
             }
-
-
-
         }
+
+        public void ComboAttack(MouseState ms, float elapsed)
+        {
+            if (!chainCombo)
+            {
+                timerAtk += elapsed;
+                if (timerAtk > 2)
+                {
+                    comboCount = 0;
+                }
+            }
+            else
+            {
+                timerAtk = 0;
+            }
+            if (stamina > 6)
+            {
+                if (ms.LeftButton == ButtonState.Pressed && !chainCombo)
+                {
+                    chainCombo = true;
+                    spriteTexture.Reset();
+                    attacked = true;
+                    stamina -= 5;
+                    if (direction == "Right" /*&& timerAtk < 2*/)
+                    {
+                        switch (comboCount)
+                        {
+                            case 0:
+                                SpriteRow = 7;
+                                flip = false;
+                                comboCount++;
+                                break;
+                            case 1:
+                                SpriteRow = 8;
+                                flip = false;
+                                comboCount++;
+                                break;
+                            case 2:
+                                SpriteRow = 9;
+                                flip = false;
+                                comboCount = 0;
+                                break;
+                            default:
+                                comboCount = 0;
+                                break;
+                        }
+                        position.X += 64;
+                    }
+                    if (direction == "Left")
+                    {
+                        switch (comboCount)
+                        {
+                            case 0:
+                                SpriteRow = 7;
+                                flip = true;
+                                comboCount++;
+                                break;
+                            case 1:
+                                SpriteRow = 8;
+                                flip = true;
+                                comboCount++;
+                                break;
+                            case 2:
+                                SpriteRow = 9;
+                                flip = true;
+                                comboCount = 0;
+                                break;
+                            default:
+                                comboCount = 0;
+                                break;
+                        }
+                        position.X -= 64;
+                    }
+                    if (direction == "Up")
+                    {
+                        switch (comboCount)
+                        {
+                            case 0:
+                                SpriteRow = 1;
+                                comboCount++;
+                                break;
+                            case 1:
+                                SpriteRow = 2;
+                                comboCount++;
+                                break;
+                            case 2:
+                                SpriteRow = 3;
+                                comboCount = 0;
+                                break;
+                            default:
+                                comboCount = 0;
+                                break;
+                        }
+                        position.Y -= 64;
+                    }
+                    if (direction == "Down")
+                    {
+                        switch (comboCount)
+                        {
+                            case 0:
+                                SpriteRow = 4;
+                                comboCount++;
+                                break;
+                            case 1:
+                                SpriteRow = 5;
+                                comboCount++;
+                                break;
+                            case 2:
+                                SpriteRow = 6;
+                                comboCount = 0;
+                                break;
+                            default:
+                                comboCount = 0;
+                                break;
+                        }
+                        position.Y += 64;
+                    }
+                    
+                }
+            }
+            if (attacked)
+            {
+                spriteTexture.UpdateFrame(elapsed);
+                if (spriteTexture.GetFrame() == 4)
+                {
+                    attacked = false;
+                    chainCombo = false;
+                }
+            }
+        }
+
         public void SetPos(Vector2 pos)
         {
             position = pos;
@@ -274,18 +452,25 @@ namespace lastdayInkhumuang
                 }
             }
         }
+        public void CheckMapColiision(BoundsCheck other)
+        {
+            if (other.Bounds.Intersects(this.Bounds))
+            {
+                position = lastPos;
+            }
+        }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
             if (!attacked)
             {
-                spriteTexture.DrawFrame(spriteBatch, position, SpriteRow);
+                spriteTexture.DrawFrame(spriteBatch, position, SpriteRow, flip);
             }
             else if (attacked)
             {
                 if (spriteTexture.GetFrame() <= 8)
                 {
-                    spriteTexture.DrawFrame(spriteBatch, position, SpriteRow);                   
+                    spriteTexture.DrawFrame(spriteBatch, position, SpriteRow, flip);                   
                 }  
                 else
                 {
@@ -297,7 +482,7 @@ namespace lastdayInkhumuang
             {
                 if (spriteTexture.GetFrame() <= 8)
                 {
-                    spriteTexture.DrawFrame(spriteBatch, position, SpriteRow);
+                    spriteTexture.DrawFrame(spriteBatch, position, SpriteRow, flip);
                 }
                 else
                 {

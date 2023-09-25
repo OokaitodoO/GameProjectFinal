@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,8 @@ using System.Threading.Tasks;
 namespace lastdayInkhumuang
 {
     internal class Melee_Enemy : Enemy, IGameFunction
-    {                                               
-
+    {
+        Vector2 lastPos;
         const int KNOCKBACK = 100;
         const float REGEN_HP = 0.2f;
         //const int SIZE_HEIGHT = 180;
@@ -26,7 +27,7 @@ namespace lastdayInkhumuang
             originPos = position;
             this.position = originPos - new Vector2(0 , boundHeight/2);
             attack = false;
-            outSide = false;
+            outSide = true;
             flip = false;
             enable = true;
             alive = true;
@@ -41,7 +42,10 @@ namespace lastdayInkhumuang
 
         public void Update(Player player, float elapsed)
         {
-            
+            Console.WriteLine("Outside: " + outSide);
+            Console.WriteLine("Attack: " + attack);
+            Console.WriteLine("Hitted: " + Hitted);
+
             //Check Alive
             if (alive)
             {
@@ -66,6 +70,8 @@ namespace lastdayInkhumuang
 
             if (alive)
             {
+                lastPos = position;
+                CheckDirection(player);
                 //Check player
                 if (player.Bounds.X + 28 > rangePos.X && player.Bounds.X < rangePos.X + RANGE_WIDTH + boundWidth/2 && player.Bounds.Y > rangePos.Y && player.Bounds.Y < rangePos.Y + RANGE_HEIGHT - boundHeight)
                 {
@@ -93,29 +99,45 @@ namespace lastdayInkhumuang
                     outSide = true;
                 }
 
-                //Hitted                
+                //Hitted (KnockBack)               
                 if (Hitted && delayHitted == 0)
                 {                    
                     spriteRow = 5;
                     Hitted = true;
                     spriteTexture.Reset();
                     hp -= damage;
-                    if (player.GetPos().X + 64 < position.X + 90)
+                    if (direction == "Left")
                     {
                         position.X += KNOCKBACK;
                     }
-                    if (player.GetPos().X + 64 > position.X + 90)
+                    if (direction == "Right")
                     {
                         position.X -= KNOCKBACK;
                     }
-                    else if (player.GetPos().Y + 64 > position.Y + 120)
+                    if (direction == "Down")
                     {
                         position.Y -= KNOCKBACK;
                     }
-                    else if (player.GetPos().Y + 64 < position.Y + 120)
+                    if (direction == "Up")
                     {
                         position.Y += KNOCKBACK;
                     }
+                    //if (player.GetPos().X + 64 < position.X + 90)
+                    //{
+                    //    position.X += KNOCKBACK;
+                    //}
+                    //if (player.GetPos().X + 64 > position.X + 90)
+                    //{
+                    //    position.X -= KNOCKBACK;
+                    //}
+                    //else if (player.GetPos().Y + 64 > position.Y + 120)
+                    //{
+                    //    position.Y -= KNOCKBACK;
+                    //}
+                    //else if (player.GetPos().Y + 64 < position.Y + 120)
+                    //{
+                    //    position.Y += KNOCKBACK;
+                    //}
                 }
                
 
@@ -192,7 +214,7 @@ namespace lastdayInkhumuang
                 {
                     attack = false;
                     delayHitted += elapsed;
-                    if (delayHitted >= 1)
+                    if (delayHitted >= 0.5)
                     {
                         Hitted = false;
                     }
@@ -216,6 +238,64 @@ namespace lastdayInkhumuang
             }                        
         }
 
+        float dx;
+        float dy;
+        public void CheckDirection(Player player)
+        {
+            dx = (player.Position.X) - (position.X + Bounds.Width / 2);
+            dy = (player.Position.Y) - (position.Y + Bounds.Height / 2);
+            if (dx >= 0)
+            {
+                if (dy >= 0)
+                {
+                    if (Math.Abs(dx) >= Math.Abs(dy))
+                    {
+                        direction = "Right";
+                    }
+                    else
+                    {
+                        direction = "Down";
+                    }
+                }
+                else
+                {
+                    if (Math.Abs(dx) >= Math.Abs(dy))
+                    {
+                        direction = "Right";
+                    }
+                    else
+                    {
+                        direction = "Up";
+                    }
+                }
+            }
+            else
+            {
+                if (dy >= 0)
+                {
+                    if (Math.Abs(dx) >= Math.Abs(dy))
+                    {
+                        direction = "Left";
+                    }
+                    else
+                    {
+                        direction = "Down";
+                    }
+                }
+                else
+                {
+                    if (Math.Abs(dx) >= Math.Abs(dy))
+                    {
+                        direction = "Left";
+                    }
+                    else
+                    {
+                        direction = "Up";
+                    }
+                }
+            }
+        }
+
         public override void CheckColiision(GameObject player)
         {           
             if (player.Bounds.Intersects(this.Bounds))
@@ -226,6 +306,13 @@ namespace lastdayInkhumuang
                         spriteTexture.Reset();
                         attack = true;                                        
                 }                    
+            }
+        }
+        public void CheckMapColiision(BoundsCheck other)
+        {
+            if (other.Bounds.Intersects(this.Bounds))
+            {
+                position = lastPos;
             }
         }
 

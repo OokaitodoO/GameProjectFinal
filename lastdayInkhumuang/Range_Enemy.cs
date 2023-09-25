@@ -16,6 +16,7 @@ namespace lastdayInkhumuang
         const int KNOCKBACK = 100;
         const float REGEN_HP = 0.2f;
         Vector2 detectArea;
+        Vector2 lastPos;
         //Vector2 attackRange;
 
         Vector2 rasenganPos;
@@ -26,6 +27,7 @@ namespace lastdayInkhumuang
         bool detect;
         bool readyAttack;
         bool releaseBullet;
+        bool rasenganVisible;
         float delayAttack;
         public Range_Enemy(Game1 game, Vector2 position, Vector2 tileLocation, int boundHeight, int boundWidth, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, Vector2.Zero, boundHeight, boundWidth, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
         {
@@ -39,7 +41,7 @@ namespace lastdayInkhumuang
             originPos = position;
             this.position = originPos - new Vector2(0 , boundHeight/2);
             attack = false;
-            outSide = false;
+            outSide = true;
             flip = false;
             enable = true;
             alive = true;
@@ -59,7 +61,7 @@ namespace lastdayInkhumuang
             detectArea = new Vector2(Bounds.X + (boundWidth/2), Bounds.Y) - new Vector2((RANGE_WIDTH / 2) + 100, RANGE_HEIGHT / 2);
             //attackRange = new Vector2(detectArea.X + 100, detectArea.Y + 100);
 
-            rasenganRec = new Rectangle((int)rasenganPos.X, (int)rasenganPos.Y, 24, 24);                        
+            rasenganRec = new Rectangle((int)rasenganPos.X, (int)rasenganPos.Y, 24, 24);
 
             //Check Alive
             if (alive)
@@ -84,8 +86,9 @@ namespace lastdayInkhumuang
             }
 
             if (alive)
-            {                
-
+            {
+                lastPos = position;
+                CheckDirection(player);
                 //Check detect
                 if (readyAttack && !attack && player.Bounds.X + 28 > detectArea.X && player.Bounds.X < detectArea.X + RANGE_WIDTH + 200 && player.Bounds.Y + 64 > detectArea.Y && player.Bounds.Y < detectArea.Y + RANGE_HEIGHT)
                 {
@@ -136,22 +139,38 @@ namespace lastdayInkhumuang
                     Hitted = true;
                     spriteTexture.Reset();
                     hp -= damage;
-                    if (player.GetPos().X + 64 < position.X + 90)
+                    if (direction == "Left")
                     {
                         position.X += KNOCKBACK;
                     }
-                    if (player.GetPos().X + 64 > position.X + 90)
+                    if (direction == "Right")
                     {
                         position.X -= KNOCKBACK;
                     }
-                    else if (player.GetPos().Y + 64 > position.Y + 120)
+                    if (direction == "Down")
                     {
                         position.Y -= KNOCKBACK;
                     }
-                    else if (player.GetPos().Y + 64 < position.Y + 120)
+                    if (direction == "Up")
                     {
                         position.Y += KNOCKBACK;
                     }
+                    //if (player.GetPos().X + 64 < position.X + 90)
+                    //{
+                    //    position.X += KNOCKBACK;
+                    //}
+                    //if (player.GetPos().X + 64 > position.X + 90)
+                    //{
+                    //    position.X -= KNOCKBACK;
+                    //}
+                    //else if (player.GetPos().Y + 64 > position.Y + 120)
+                    //{
+                    //    position.Y -= KNOCKBACK;
+                    //}
+                    //else if (player.GetPos().Y + 64 < position.Y + 120)
+                    //{
+                    //    position.Y += KNOCKBACK;
+                    //}
                 }
 
                 //Follow player
@@ -233,7 +252,7 @@ namespace lastdayInkhumuang
                 {
                     attack = false;
                     delayHitted += elapsed;
-                    if (delayHitted >= 1)
+                    if (delayHitted >= 0.5)
                     {
                         Hitted = false;
                     }
@@ -265,18 +284,26 @@ namespace lastdayInkhumuang
                 else
                 {
                     delayAttack = 0;
-                    rasenganPos = position;
+                    rasenganPos = position + new Vector2(boundWidth/2, boundHeight/2);
                     CheckAngle(player);
                 }
                 if (hitPlayer)
                 {
-                    rasenganPos = position;
+                    rasenganPos = position + new Vector2(boundWidth / 2, boundHeight / 2);
+                    dealDamage = false;
                 }
             }
 
 
         }
-        
+        public void CheckMapColiision(BoundsCheck other)
+        {
+            if (other.Bounds.Intersects(this.Bounds))
+            {
+                position = lastPos;
+            }
+        }
+
         const int SPEED_BULLET = 5;        
         float dx;
         float dy;
@@ -335,6 +362,61 @@ namespace lastdayInkhumuang
                 }
             }
         }
+        public void CheckDirection(Player player)
+        {
+            dx = (player.Position.X) - (position.X + Bounds.Width / 2);
+            dy = (player.Position.Y) - (position.Y + Bounds.Height / 2);
+            if (dx >= 0)
+            {
+                if (dy >= 0)
+                {
+                    if (Math.Abs(dx) >= Math.Abs(dy))
+                    {
+                        direction = "Right";
+                    }
+                    else
+                    {
+                        direction = "Down";
+                    }
+                }
+                else
+                {
+                    if (Math.Abs(dx) >= Math.Abs(dy))
+                    {
+                        direction = "Right";
+                    }
+                    else
+                    {
+                        direction = "Up";
+                    }
+                }
+            }
+            else
+            {
+                if (dy >= 0)
+                {
+                    if (Math.Abs(dx) >= Math.Abs(dy))
+                    {
+                        direction = "Left";
+                    }
+                    else
+                    {
+                        direction = "Down";
+                    }
+                }
+                else
+                {
+                    if (Math.Abs(dx) >= Math.Abs(dy))
+                    {
+                        direction = "Left";
+                    }
+                    else
+                    {
+                        direction = "Up";
+                    }
+                }
+            }
+        }
 
         public Vector2 GetPos()
         {
@@ -358,9 +440,11 @@ namespace lastdayInkhumuang
         }
         public override void Draw(SpriteBatch spriteBatch)
         {
+            rasenganVisible = false;
             spriteTexture.DrawFrame(spriteBatch, position, spriteRow, flip);
-            if (releaseBullet && !hitPlayer)
+            if (releaseBullet && !hitPlayer && alive)
             {
+                rasenganVisible = true;
                 spriteBatch.Draw(rasengan, rasenganPos, new Rectangle(0,0, 24, 24),  Color.White);
             }
         }                
@@ -376,7 +460,7 @@ namespace lastdayInkhumuang
             {
                 dealDamage = false;                                
             }
-            if (rasenganRec.Intersects(((Player)other).Bounds))
+            else if (rasenganRec.Intersects(((Player)other).Bounds) && rasenganVisible)
             {
                 hitPlayer = true;
                 dealDamage = true;

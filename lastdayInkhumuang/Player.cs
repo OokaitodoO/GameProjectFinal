@@ -11,7 +11,8 @@ using System.Threading.Tasks;
 namespace lastdayInkhumuang
 {
     public class Player : AnimatedObject, IGameFunction
-    {        
+    {
+        public Game game;
         int SpriteRow;
         Vector2 startPos;
         Vector2 lastPos;
@@ -37,8 +38,11 @@ namespace lastdayInkhumuang
         bool boundMap;
         bool move;
 
+        bool alive;
+
         public Player(Game1 game, Vector2 position, float hp, float stamina, float mana, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, Vector2.Zero, 128, 128, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
         {
+            this.game = game;
             spriteTexture.Load(game.Content, "Player/player_all_set_", frames, framesRow, framesPerSec);
             SpriteRow = 13;
             this.hp = hp;
@@ -49,6 +53,7 @@ namespace lastdayInkhumuang
             attacked = false;
             skilled = false;
             dash = false;
+            alive = true;
         }
         public Player(Game1 game, Vector2 position, Vector2 origin, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, origin, Vector2.Zero, 128, 128, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
         {
@@ -63,8 +68,7 @@ namespace lastdayInkhumuang
             lastPos = position;
             CheckDirection(ms);
             //Attack (not yet complete)
-            ComboAttack(ms, elapsed);
-
+            ComboAttack(ms, elapsed);           
             //Skill
             if (ks.IsKeyDown(Keys.E) && !skilled && !skill.GetSkilled())
             {
@@ -235,7 +239,6 @@ namespace lastdayInkhumuang
                 }
             }
             
-
             //Dash
             if (ks.IsKeyDown(Keys.LeftShift) && oldKs.IsKeyUp(Keys.LeftShift) && !dash)
             {
@@ -274,10 +277,13 @@ namespace lastdayInkhumuang
             if (hp >= 100)
             {
                 hp = 100;
+                alive = true;
             }
             else if (hp <= 0)
             {
                 hp = 0;
+                alive = false;
+                Game1.GAME_STATE = 2;
             }
             //Regen stamina
             if (stamina <= 0)
@@ -492,9 +498,20 @@ namespace lastdayInkhumuang
         }
 
         public void Restart()
-        {
-            position = startPos;
-            SpriteRow = 7;
+        {            
+            //if (Game1.Map == "Level1")
+            //{
+            //    position = startPos;
+            //    SpriteRow = 7;
+            //    hp = 100;
+            //    stamina = 100;                
+            //}
+            //else if (Game1.Map == "Boss1")
+            //{
+            //    position = startPos;
+            //    SpriteRow = 7;
+            //}
+            
         }
 
         float dx;

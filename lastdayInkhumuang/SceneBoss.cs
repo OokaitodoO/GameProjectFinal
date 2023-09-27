@@ -25,7 +25,7 @@ namespace lastdayInkhumuang
         public override void Update(GameTime gameTime, float elapsed, Player player)
         {
             Game1.LOCK_CAM = true;
-            if (Game1.GAME_STATE == 0)
+            if (Game1.GAME_STATE == 1)
             {
                 if (Game1.monsterCount == 0 && player.Bounds.X + 64 >= (Game1.MAP_WIDTH/3) - 10)
                 {

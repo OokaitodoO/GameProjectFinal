@@ -19,6 +19,22 @@ namespace lastdayInkhumuang
         {
             this.drawWidth = width;
             this.drawHeight = height;
+            position = new Vector2(Game1._cameraPosition.X, Game1._cameraPosition.Y + 30);
+            if (game.player.GetStamina() > 0)
+            {
+                staminaWidth = (game.player.GetStamina() / MAX_STAMINA) * drawWidth;
+            }
+            else
+            {
+                staminaWidth = 1;
+            }
+            staminaBar = new Texture2D(game.GraphicsDevice, (int)staminaWidth, drawHeight);
+            data = new Color[(int)staminaWidth * drawHeight];
+            for (int i = 0; i < data.Length; i++)
+            {
+                data[i] = Color.LightGoldenrodYellow;
+            }
+            staminaBar.SetData(data);
         }
 
         public void Update(float elapsed, Player player, GraphicsDevice gd)

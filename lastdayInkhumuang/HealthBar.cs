@@ -21,6 +21,30 @@ namespace lastdayInkhumuang
         public HealthBar(Game1 game, Vector2 position, int width, int height, float layerDepth) : base(game, position, width, height, layerDepth)
         {
             this.drawHeight = height;
+            position = Game1._cameraPosition;
+            if (game.player.GetHp() > 0)
+            {
+                hpWidth = (game.player.GetHp() / MAX_HP) * MAX_HPBAR;
+            }
+            else
+            {
+                hpWidth = 1;
+            }
+            if (hpWidth > 125)
+            {
+                hpColor = Color.Green;
+            }
+            else if (hpWidth > 62)
+            {
+                hpColor = Color.Yellow;
+            }
+            else if (hpWidth > 0)
+            {
+                hpColor = Color.Red;
+            }
+            hpBar = new Texture2D(game.GraphicsDevice, (int)hpWidth, drawHeight);
+            data = new Color[(int)hpWidth * HPBAR_HEIGHT];
+            hpBar.SetData(data);
         }
 
         public void Update(float elapsed, Player player, GraphicsDevice gd)

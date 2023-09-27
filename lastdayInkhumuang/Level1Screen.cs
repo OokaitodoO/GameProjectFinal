@@ -48,7 +48,7 @@ namespace lastdayInkhumuang
         {
             //Console.WriteLine(Game1.monsterCount);
             Game1.LOCK_CAM = false;
-            if (Game1.GAME_STATE == 0)
+            if (Game1.GAME_STATE == 1)
             {
                 if (Game1.monsterCount == 0 && player.Bounds.X + 64 >= Game1.MAP_WIDTH - 10 && player.Bounds.Y > 128 && player.Bounds.Y < 384)
                 {

@@ -42,9 +42,6 @@ namespace lastdayInkhumuang
 
         public void Update(Player player, float elapsed)
         {
-            Console.WriteLine("Outside: " + outSide);
-            Console.WriteLine("Attack: " + attack);
-            Console.WriteLine("Hitted: " + Hitted);
 
             //Check Alive
             if (alive)

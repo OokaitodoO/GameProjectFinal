@@ -14,12 +14,13 @@ namespace lastdayInkhumuang
         private SpriteBatch _spriteBatch;
         //private GraphicsDevice _graphicDevice;
         //TestCommit
-        public static int GAME_STATE = 0; // 0: In game | 1: Die
+        public static int GAME_STATE = 0; // 0: Tile | 1: Gameplay | 2: Pause
         public static bool LOCK_CAM;
 
         KeyboardState ks = new KeyboardState();
         KeyboardState oldKs = new KeyboardState();
         MouseState ms = new MouseState();
+        public static Rectangle mouseRec;
 
         public const int TILE_SIZE = 128;
         public const int MAP_WIDTH = 3200; //1600 * 2
@@ -31,7 +32,8 @@ namespace lastdayInkhumuang
         public static Vector2 _bgPosition;
 
         //Scenes
-        public string Map;
+        //public static string Map;
+        public TitleScreen mTitle;
         public Level1Screen mLevel1;
         public Level2Screen mLevel2;
         public SceneBoss mBoss1;
@@ -78,12 +80,15 @@ namespace lastdayInkhumuang
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _cameraPosition = new Vector2(0, 1200);
+            mouseRec = new Rectangle(0,0, 1,1);
+
             //Scenes
+            mTitle = new TitleScreen(this, new EventHandler(TitleScreenEvent));
             mLevel1 = new Level1Screen(this, new EventHandler(Level1ScreenEvent));
             mLevel2 = new Level2Screen(this.Content, new EventHandler(Level2ScreenEvent));
             mBoss1 = new SceneBoss(this, new EventHandler(SceneBossScreenEvent));
-            mCurrentScreen = mLevel1;
-            
+            mCurrentScreen = mTitle;
+
 
             //Player
             player = new Player(this, new Vector2(0,1500), 100, 100, 100, 5, 6, 13, 0.5f);
@@ -102,16 +107,19 @@ namespace lastdayInkhumuang
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             ks = Keyboard.GetState();
             ms = Mouse.GetState();
-
+            mouseRec.Location = ms.Position;
             //Scenes
             mCurrentScreen.Update(gameTime, elapsed, player);
 
             switch (GAME_STATE)
             {
                 case 0:
-                    GamePlay(elapsed);
+                    mTitle.Update(ms, elapsed);
                     break;
                 case 1:
+                    GamePlay(elapsed);
+                    break;
+                case 2:
                     break;
             }
             if (ks.IsKeyDown(Keys.F1))
@@ -120,7 +128,7 @@ namespace lastdayInkhumuang
             }
             if (ks.IsKeyDown(Keys.F2))
             {
-                GAME_STATE = 0;
+                GAME_STATE = 2;
             }
             //Console.WriteLine(GAME_STATE);
             oldKs = ks;
@@ -134,12 +142,17 @@ namespace lastdayInkhumuang
             var transformMatrix = _camera.GetViewMatrix();
             _spriteBatch.Begin(transformMatrix: transformMatrix);
             mCurrentScreen.Draw(_spriteBatch);
+
+            if (mCurrentScreen != mTitle)
+            {
+                player.Draw(_spriteBatch);
+                playerSkill.Draw(_spriteBatch);
+                playerAtkEfx.Draw(_spriteBatch);
+                staminaBar.Draw(_spriteBatch);
+                hpBar.Draw(_spriteBatch);
+            }
             
-            player.Draw(_spriteBatch);
-            playerSkill.Draw(_spriteBatch);
-            playerAtkEfx.Draw(_spriteBatch);
-            staminaBar.Draw(_spriteBatch);
-            hpBar.Draw(_spriteBatch);
+
             _spriteBatch.End();
 
             base.Draw(gameTime);
@@ -165,11 +178,16 @@ namespace lastdayInkhumuang
             hpBar.Update(elapsed, player, GraphicsDevice);           
         }
 
+        protected void Pause(float elapsed)
+        {
+
+        }
+
         protected void Restart()
         {
-            player.Restart();
-            Console.Clear();
-            GAME_STATE = 0;
+            //player.Restart();
+            //Console.Clear();
+            //GAME_STATE = 1;
         }
 
         public void UpdateCamera(Vector2 move)
@@ -187,7 +205,11 @@ namespace lastdayInkhumuang
         {
             return _cameraPosition.Y;
         }
-
+        public void TitleScreenEvent(object obj, EventArgs e)
+        {
+            mCurrentScreen = mLevel1;
+            oldScreen = mTitle;
+        }
         public void Level1ScreenEvent(object obj, EventArgs e)
         {
             mCurrentScreen = mBoss1;
@@ -202,7 +224,8 @@ namespace lastdayInkhumuang
         {
             if (oldScreen == mLevel1)
             {
-                mCurrentScreen = mLevel2;
+                mCurrentScreen = mTitle;
+                GAME_STATE = 0;
             }
             
         }

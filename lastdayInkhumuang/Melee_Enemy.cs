@@ -29,7 +29,6 @@ namespace lastdayInkhumuang
             attack = false;
             outSide = true;
             flip = false;
-            enable = true;
             alive = true;
 
             rangePos = new Vector2(originPos.X - (RANGE_WIDTH / 2) + this.boundWidth / 2, originPos.Y - (RANGE_HEIGHT / 2) + this.boundHeight / 2);
@@ -211,7 +210,7 @@ namespace lastdayInkhumuang
                 {
                     attack = false;
                     delayHitted += elapsed;
-                    if (delayHitted >= 0.5)
+                    if (delayHitted >= 0.3)
                     {
                         Hitted = false;
                     }
@@ -345,7 +344,12 @@ namespace lastdayInkhumuang
 
         public void Restart()
         {
-            
+            alive = true;
+            hp = 100;
+            position = originPos - new Vector2(0, boundHeight / 2);
+            attack = false;
+            outSide = true;
+            flip = false;
         }
 
         public override bool DealDamage()

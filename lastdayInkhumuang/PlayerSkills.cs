@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace lastdayInkhumuang
 {
-    public class PlayerSkills : Player
+    public class PlayerSkills : Player, IGameFunction
     {
         const int SPEED = 10;
-        int spriteRow;
-        bool released;
+        public static int spriteRow;
+        public static bool released;
         float elapsed;
         Vector2 origin;
 
@@ -124,6 +124,11 @@ namespace lastdayInkhumuang
                     position += new Vector2(SPEED * (float)Math.Cos(spriteTexture.Rotation), SPEED * (float)Math.Sin(spriteTexture.Rotation));
                 }
             }                           
+        }
+        public static void Restart()
+        {
+            released = false;
+            spriteRow = 1;
         }
         public void CheckColiision(GameObject other)
         {

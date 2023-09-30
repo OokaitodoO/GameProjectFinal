@@ -11,26 +11,29 @@ namespace lastdayInkhumuang
 {
     internal class MiniBoss1 : Enemy, IGameFunction
     {
+        int attackCount;
         int stateBoss;
         bool readySkill;
         bool speared;
+        bool spearHit;
         float attakTiming;
         float delaySpear;
         Game1 game;
         public MiniBoss1(Game1 game, Vector2 position, int boundHeight, int boundWidth, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, Vector2.Zero, boundHeight, boundWidth, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
         {
-            spriteTexture.Load(game.Content, "Boss/Dullahahitn", frames, framesRow, framesPerSec);
-            speed = 2;
+            spriteTexture.Load(game.Content, "Boss/Dullaha/Dullahahitn_All_Set", frames, framesRow, framesPerSec);
+            speed = 6;
             alive = true;
             hp = 500;
             attack = false;
-            outSide = false;
             flip = false;
-            enable = true;
             alive = true;
+            speared = false;
             readySkill = false;
+            spearHit = false;
             stateBoss = 0; // 0: NormalAttack | 1: Skill
             this.game = game;
+            spriteRow = 3;
         }
 
         public override Rectangle Bounds => new Rectangle((int)position.X, (int)position.Y + 120, boundWidth, boundHeight - 120);
@@ -38,9 +41,9 @@ namespace lastdayInkhumuang
         
         public void Update(float elapsed, Player player) 
         {
-            Console.WriteLine("BossHp: " + hp);
             if (alive)
             {
+                Console.WriteLine("Hp: " + hp);
                 switch (stateBoss) 
                 {
                     case 0:
@@ -58,28 +61,32 @@ namespace lastdayInkhumuang
 
         public void NormalAttack(Player player, float elapsed)
         {
-            if (position.X + 64 < player.GetPos().X) //Right
+            if (!attack)
             {
-                position.X += speed;
-                spriteRow = 1;
-                flip = false;
+                if (position.X + 64 < player.GetPos().X) //Right
+                {
+                    position.X += speed;
+                    spriteRow = 3;
+                    flip = false;
+                }
+                if (position.X + 64 > player.GetPos().X) //Left
+                {
+                    position.X -= speed;
+                    spriteRow = 3;
+                    flip = true;
+                }
+                if (position.Y + 128 < player.GetPos().Y) //Down
+                {
+                    position.Y += speed;
+                    spriteRow = 3;
+                }
+                if (position.Y + 128 > player.GetPos().Y) //Up
+                {
+                    position.Y -= speed;
+                    spriteRow = 3;
+                }
             }
-            if (position.X + 64 > player.GetPos().X) //Left
-            {
-                position.X -= speed;
-                spriteRow = 1;
-                flip = true;
-            }
-            if (position.Y + 128 < player.GetPos().Y) //Down
-            {
-                position.Y += speed;
-                spriteRow = 1;
-            }
-            if (position.Y + 128 > player.GetPos().Y) //Up
-            {
-                position.Y -= speed;
-                spriteRow = 1;
-            }
+           
 
             //Hitted
             if (Hitted && delayHitted == 0)
@@ -108,42 +115,42 @@ namespace lastdayInkhumuang
             }
 
             //Attack
-            if (attack)
-            {                
-                attakTiming += elapsed;
-                if (attakTiming >= 3)
-                {
-                    dealDamage = true;
-                    attack = false;
-                    
-                }
+            if (attack && spriteTexture.GetFrame() == 4)
+            {
+                attackCount++;
+                dealDamage = true;
+                attack = false;
             }
             else
             {
                 dealDamage = false;
-                attakTiming = 0;
             }
 
             //TestSwitchcase
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            if (attackCount >= 6)
             {
                 stateBoss = 1;
             }
         }
+
         public void SpearAttack(Player player, float elapsed)
-        {            
+        {
+            attack = false;
             if (!readySkill)
             {
+                dealDamage = false;
                 if (position.X > player.Position.X)
                 {
                     flip = false;
-                    position.X += speed*3;
+                    spriteRow = 3;
+                    position.X += speed;
                     direction = "Right";
                 }
                 else if (position.X < player.Position.X)
                 {
                     flip = true;
-                    position.X -= speed*3;
+                    spriteRow = 3;
+                    position.X -= speed;
                     direction = "Left";
                 }
                 if (position.X + boundWidth < 0 || position.X > game.GraphicsDevice.Viewport.Width + Game1._cameraPosition.X)
@@ -173,14 +180,17 @@ namespace lastdayInkhumuang
                 }
                 else if (direction == "Right" && speared)
                 {
+                    spriteRow = 1;
                     flip = true;
-                    position -= new Vector2(speed*7, 0f);
+                    position -= new Vector2(speed*3, 0f);
                     if (position.X + boundWidth < 0)
                     {
                         speared = false;
                         readySkill = false;
+                        spearHit = false;
+                        attackCount = 0;
                         stateBoss = 0;
-                    }
+                    }                    
                 }
                 if (direction == "Left" && !speared)
                 {
@@ -188,16 +198,20 @@ namespace lastdayInkhumuang
                 }
                 else if (direction == "Left" && speared)
                 {
+                    spriteRow = 1;
                     flip = false;
-                    position += new Vector2(speed*7, 0f);
+                    position += new Vector2(speed*3, 0f);
                     if (position.X > game.GraphicsDevice.Viewport.Width)
                     {
                         speared = false;
                         readySkill = false;
+                        spearHit = false;
+                        attackCount = 0;
                         stateBoss = 0;
-                    }
+                    }                   
                 }
             }
+
             
         }
 
@@ -220,11 +234,13 @@ namespace lastdayInkhumuang
         {
             if (player.Bounds.Intersects(this.Bounds))
             {
-                if (player.GetType().IsAssignableTo(typeof(Player)) && !speared)
+                if (player.GetType().IsAssignableTo(typeof(Player)) && !speared && !attack && alive && stateBoss == 0)
                 {
+                    spriteRow = 2;
+                    spriteTexture.Reset();
                     attack = true;
                 }
-                else if (player.GetType().IsAssignableTo(typeof(Player)) && speared)
+                else if (player.GetType().IsAssignableTo(typeof(Player)) && speared && !dealDamage)
                 {
                     dealDamage = true;
                 }
@@ -232,7 +248,12 @@ namespace lastdayInkhumuang
                 {
                     dealDamage = false;
                 }
+                //if (player.GetType().IsAssignableTo(typeof(Player)) && speared && dealDamage)
+                //{
+                //    dealDamage = false;
+                //}
             }
+           
         }
 
         public override void UpdateFrame(float elapsed)
@@ -249,7 +270,15 @@ namespace lastdayInkhumuang
         }
         public void Restart()
         {
-            
+            attackCount = 0;
+            alive = true;
+            hp = 500;
+            attack = false;
+            flip = false;
+            alive = true;
+            readySkill = false;
+            speared = false;
+            stateBoss = 0; // 0: NormalAttack | 1: Skill
         }
 
         public bool GetSpear()

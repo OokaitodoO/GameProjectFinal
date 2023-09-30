@@ -12,6 +12,7 @@ namespace lastdayInkhumuang
 {
     public class Player : AnimatedObject, IGameFunction
     {
+        PlayerDash dashEffect;
         public Game game;
         int SpriteRow;
         Vector2 startPos;
@@ -20,14 +21,16 @@ namespace lastdayInkhumuang
         int SPEED = 8;
         public bool attacked;
         float timerAtk;
-        int comboCount;
-        bool chainCombo;
+        public int comboCount;
+        public bool chainCombo;
         protected bool skilled;
-        bool dash;
+        public bool dash;
         const int WIDTH = 128;
         const int HEIGHT = 128;
-        const int RANGE_DASH = 192;
-        float dashCd;
+        const int RANGE_DASH = 128;
+        public float dashCd;
+
+        const int MOVE_ATK_FORWARD = 64;
 
         float hp;
         float stamina;
@@ -43,6 +46,7 @@ namespace lastdayInkhumuang
         public Player(Game1 game, Vector2 position, float hp, float stamina, float mana, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, Vector2.Zero, 128, 128, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
         {
             this.game = game;
+            dashEffect = new PlayerDash(game, Vector2.Zero, 5, 16, 1, 0f);
             spriteTexture.Load(game.Content, "Player/player_all_set_", frames, framesRow, framesPerSec);
             SpriteRow = 13;
             this.hp = hp;
@@ -65,6 +69,10 @@ namespace lastdayInkhumuang
         
         public void Update(Game1 game,KeyboardState ks, KeyboardState oldKs, MouseState ms, PlayerSkills skill, float elapsed)
         {
+            Console.WriteLine("PlayerPos: " + position);
+            //Console.WriteLine("Attack: " + attacked);
+            //Console.WriteLine("Stamina: " + stamina);
+
             lastPos = position;
             CheckDirection(ms);
             //Attack (not yet complete)
@@ -261,6 +269,7 @@ namespace lastdayInkhumuang
                     dash = false;
                 }
             }
+            dashEffect.Update(elapsed, this);
 
             //Test Hp            
             if (ks.IsKeyDown(Keys.Down))
@@ -341,7 +350,7 @@ namespace lastdayInkhumuang
                                 comboCount = 0;
                                 break;
                         }
-                        position.X += 64;
+                        position.X += MOVE_ATK_FORWARD;
                     }
                     if (direction == "Left")
                     {
@@ -366,7 +375,7 @@ namespace lastdayInkhumuang
                                 comboCount = 0;
                                 break;
                         }
-                        position.X -= 64;
+                        position.X -= MOVE_ATK_FORWARD;
                     }
                     if (direction == "Up")
                     {
@@ -388,7 +397,7 @@ namespace lastdayInkhumuang
                                 comboCount = 0;
                                 break;
                         }
-                        position.Y -= 64;
+                        position.Y -= MOVE_ATK_FORWARD;
                     }
                     if (direction == "Down")
                     {
@@ -410,7 +419,7 @@ namespace lastdayInkhumuang
                                 comboCount = 0;
                                 break;
                         }
-                        position.Y += 64;
+                        position.Y += MOVE_ATK_FORWARD;
                     }
                     
                 }
@@ -449,7 +458,7 @@ namespace lastdayInkhumuang
                 {
                     if (((MiniBoss1)other).GetSpear())
                     {
-                        hp -= 30;
+                        hp -= 4;
                     }
                     else
                     {
@@ -495,23 +504,20 @@ namespace lastdayInkhumuang
                     skilled = false;
                 }
             }
+            dashEffect.Draw(spriteBatch, this);
         }
 
         public void Restart()
-        {            
-            //if (Game1.Map == "Level1")
-            //{
-            //    position = startPos;
-            //    SpriteRow = 7;
-            //    hp = 100;
-            //    stamina = 100;                
-            //}
-            //else if (Game1.Map == "Boss1")
-            //{
-            //    position = startPos;
-            //    SpriteRow = 7;
-            //}
-            
+        {
+            PlayerSkills.Restart();
+            hp = 100;
+            stamina = 100;
+            position = startPos;
+            attacked = false;
+            chainCombo = false;
+            skilled = false;
+            dash = false;
+            spriteTexture.Reset();
         }
 
         float dx;
@@ -870,6 +876,10 @@ namespace lastdayInkhumuang
         public bool GetAttack()
         {
             return attacked;
+        }
+        public bool GetAlive()
+        {
+            return alive;
         }
         public bool Skill()
         {

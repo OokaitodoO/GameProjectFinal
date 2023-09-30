@@ -73,6 +73,18 @@
 /processorParam:TextureFormat=Color
 /build:Boss/BossTuderbolt.png
 
+#begin Boss/Dullaha/Dullahahitn_All_Set.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Boss/Dullaha/Dullahahitn_All_Set.png
+
 #begin Boss/Dullahahitn.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -181,6 +193,30 @@
 /processorParam:TextureFormat=Color
 /build:Player/Effect_Attack.png
 
+#begin Player/Effect_Warp.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Player/Effect_Warp.png
+
+#begin Player/Effect-_attack.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Player/Effect-_attack.png
+
 #begin Player/player_all_set_.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -241,6 +277,18 @@
 /processorParam:TextureFormat=Color
 /build:Player/set-Skill-E.png
 
+#begin Player/skill_player_Attack.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Player/skill_player_Attack.png
+
 #begin Scenes/1st_Level.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -276,4 +324,35 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Scenes/draft-map.png
+
+#begin Scenes/Map_Boss.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Scenes/Map_Boss.png
+
+#begin Scenes/Title/logo game solo  0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Scenes/Title/logo game solo  0.png
+
+#begin Ui/File.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Ui/File.spritefont
 

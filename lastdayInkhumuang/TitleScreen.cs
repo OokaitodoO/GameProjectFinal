@@ -13,6 +13,7 @@ namespace lastdayInkhumuang
     {
         Game1 game;
         Texture2D menu;
+        Texture2D bg;
         Rectangle playButton;
         Rectangle creditsButton;
         Rectangle exitButton;
@@ -25,7 +26,7 @@ namespace lastdayInkhumuang
         {
             this.game = game;
             menu = game.Content.Load<Texture2D>("menu");
-            
+            bg = game.Content.Load<Texture2D>("Scenes/Title/logo game solo  0");
             playPos = new Vector2(250, 250);
             playButton = new Rectangle((int)playPos.X, (int)playPos.Y, buttonWidth, buttonHeight);
             creditsPos = new Vector2(250, 300);
@@ -37,7 +38,7 @@ namespace lastdayInkhumuang
         {
             if (Game1.mouseRec.Intersects(playButton) && ms.LeftButton == ButtonState.Pressed) //Play
             {
-                Game1.GAME_STATE = 1;
+                Game1.GAME_STATE = 1;                
                 ScreenEvent.Invoke(this, new EventArgs());
                 return;
             }
@@ -48,6 +49,7 @@ namespace lastdayInkhumuang
         }
         public override void Draw(SpriteBatch spriteBatch)
         {
+            spriteBatch.Draw(bg, Vector2.Zero, null,Color.White, 0f, Vector2.Zero, new Vector2(1.1f, 1f), 0, 0);
             if (!Game1.mouseRec.Intersects(playButton)) //play
             {
                 spriteBatch.Draw(menu, playPos, new Rectangle(0, 0, buttonWidth, buttonHeight), Color.White);

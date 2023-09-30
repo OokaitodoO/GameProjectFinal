@@ -32,7 +32,7 @@ namespace lastdayInkhumuang
         public Range_Enemy(Game1 game, Vector2 position, Vector2 tileLocation, int boundHeight, int boundWidth, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, Vector2.Zero, boundHeight, boundWidth, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
         {
             spriteTexture.Load(game.Content, "Enemy/Monster_Sword_all", frames, framesRow, framesPerSec);
-            rasengan = game.Content.Load<Texture2D>("ball");            
+            rasengan = game.Content.Load<Texture2D>("ball_mage");            
             this.boundHeight= boundHeight;
             this.boundWidth= boundWidth;
             hp = 100;
@@ -252,7 +252,7 @@ namespace lastdayInkhumuang
                 {
                     attack = false;
                     delayHitted += elapsed;
-                    if (delayHitted >= 0.5)
+                    if (delayHitted >= 0.3)
                     {
                         Hitted = false;
                     }
@@ -467,9 +467,18 @@ namespace lastdayInkhumuang
             }
 
         }
+
         public void Restart()
         {
-            
+            alive = true;
+            hp = 100;
+            position = originPos - new Vector2(0, boundHeight / 2);
+            attack = false;
+            outSide = true;
+            flip = false;
+            detect = false;
+            releaseBullet = false;
+            readyAttack = true;
         }
     }
 }

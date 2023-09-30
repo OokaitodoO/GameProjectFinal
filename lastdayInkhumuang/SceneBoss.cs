@@ -15,15 +15,27 @@ namespace lastdayInkhumuang
         Texture2D bossScene;
         MiniBoss1 miniBoss;
         Game1 game;
-        List<GameObject> Boss = new List<GameObject>();
+        public static List<GameObject> Boss = new List<GameObject>();
+        public static List<BoundsCheck> Bounds = new List<BoundsCheck>();
+        KeyboardState ks;
+        KeyboardState oldks;
         public SceneBoss(Game1 game,EventHandler theScreenEvent) : base(theScreenEvent)
         {
-            bossScene = game.Content.Load<Texture2D>("Scenes/Bg1");            
-            Boss.Add(new MiniBoss1(game, new Vector2(), 256, 256, 1, 8, 1, 0.5f));
+            bossScene = game.Content.Load<Texture2D>("Scenes/Map_Boss");            
+            Boss.Add(new MiniBoss1(game, new Vector2(), 300, 300, 5, 7, 3, 0.5f));
             this.game = game;
+
+            //MapCollision
+            Bounds.Add(new BoundsCheck(game, new Vector2(-(Game1.TILE_SIZE * 2), 0), Game1.TILE_SIZE * 15, Game1.TILE_SIZE * 2));
+            Bounds.Add(new BoundsCheck(game, new Vector2((Game1.TILE_SIZE * 8), 0), Game1.TILE_SIZE * 15, Game1.TILE_SIZE * 2));
+            Bounds.Add(new BoundsCheck(game, new Vector2(0, -(Game1.TILE_SIZE)), Game1.TILE_SIZE * 2, Game1.TILE_SIZE * 25));
+            Bounds.Add(new BoundsCheck(game, new Vector2(0, (Game1.TILE_SIZE * 14)), Game1.TILE_SIZE * 2, Game1.TILE_SIZE * 25));
+
+            Bounds.Add(new BoundsCheck(game, new Vector2(0, (Game1.TILE_SIZE * 5)), Game1.TILE_SIZE, Game1.TILE_SIZE * 25));
         }
         public override void Update(GameTime gameTime, float elapsed, Player player)
         {
+            ks = Keyboard.GetState();
             Game1.LOCK_CAM = true;
             if (Game1.GAME_STATE == 1)
             {
@@ -51,14 +63,52 @@ namespace lastdayInkhumuang
                             ((MiniBoss1)gameObject).CheckColiision(game.player);
                             ((MiniBoss1)gameObject).UpdateFrame(elapsed);
                         }                        
-                    }
-                    
+                    }                    
+                }
+                foreach (BoundsCheck bounds in Bounds)
+                {
+                    player.CheckMapColiision(bounds);
+                }
+                if (ks.IsKeyDown(Keys.Escape) && oldks.IsKeyUp(Keys.Escape))
+                {
+                    Game1.GAME_STATE = 2;
                 }
             }
-            
-
+            else if (Game1.GAME_STATE == 2)
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.Enter) && !player.GetAlive())
+                {
+                    game.mCurrentScreen = game.mLevel1;
+                    player.Restart();
+                    Game1._cameraPosition = new Vector2(0, 1200);
+                    Game1.monsterCount = Level1Screen.Enemy.Count;
+                }
+                else if (ks.IsKeyDown(Keys.Enter) && player.GetAlive())
+                {
+                    Game1.LOCK_CAM = true;
+                    Game1.GAME_STATE = 0;
+                    Game1._cameraPosition = Vector2.Zero;
+                    Game1._camera.LookAt(Game1._bgPosition);
+                    game.mCurrentScreen = game.mTitle;
+                }
+                else if (ks.IsKeyDown(Keys.Escape) && oldks.IsKeyUp(Keys.Escape))
+                {
+                    Game1.GAME_STATE = 1;
+                }
+            }
+            oldks = ks;
             //1stBoss
             //miniBoss.Update(elapsed, game.player);
+        }
+        public static void ResetScreen(Player player)
+        {            
+            foreach (GameObject gameObject in Boss)
+            {
+                if (gameObject.GetType().IsAssignableTo(typeof(MiniBoss1)))
+                {
+                    ((MiniBoss1)gameObject).Restart();
+                }
+            }
         }
         public override void Draw(SpriteBatch spriteBatch)
         {

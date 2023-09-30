@@ -101,7 +101,7 @@ namespace lastdayInkhumuang
                     {
                         Ended = true;
                     }
-                }                
+                }
                 if (frame_r == framerow)
                 {
                     frame_r = 0;
@@ -109,13 +109,13 @@ namespace lastdayInkhumuang
                     {
                         Ended = true;
                     }
-                }
-                
+                }                
                 // Keep the Frame between 0 and the total frames, minus one.
                 Frame = Frame % framecount;
                 // check start check end
                 TotalElapsed -= TimePerFrame;
-            }           
+            }  
+            
         }
 
         // class AnimatedTexture
@@ -170,6 +170,25 @@ namespace lastdayInkhumuang
             startrow = row;
             Rectangle sourcerect = new Rectangle();
             sourcerect = new Rectangle(FrameWidth * frame, FrameHeight * (startrow - 1),
+                    FrameWidth, FrameHeight);
+            if (flip == false)
+            {
+                batch.Draw(myTexture, screenPos, sourcerect, Color.White,
+                    Rotation, Origin, Scale, SpriteEffects.None, Depth);
+            }
+            else
+            {
+                batch.Draw(myTexture, screenPos, sourcerect, Color.White,
+                    Rotation, Origin, Scale, SpriteEffects.FlipHorizontally, Depth);
+            }
+        }
+        public void DrawFrame(SpriteBatch batch, Vector2 screenPos, int row, float Rotation)
+        {
+            int FrameWidth = myTexture.Width / framecount;
+            int FrameHeight = myTexture.Height / framerow;
+            startrow = row;
+            Rectangle sourcerect = new Rectangle();
+            sourcerect = new Rectangle(FrameWidth * Frame, FrameHeight * (startrow - 1),
                     FrameWidth, FrameHeight);
             if (flip == false)
             {

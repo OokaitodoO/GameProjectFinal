@@ -33,6 +33,7 @@ namespace lastdayInkhumuang
 
         //Scenes
         //public static string Map;
+        public Texture2D pauseScreen;
         public TitleScreen mTitle;
         public Level1Screen mLevel1;
         public Level2Screen mLevel2;
@@ -50,6 +51,7 @@ namespace lastdayInkhumuang
         //Ui
         HealthBar hpBar;
         StaminaBar staminaBar;
+        SpriteFont pause;
 
         //Enemy
         public static int monsterCount;
@@ -87,22 +89,24 @@ namespace lastdayInkhumuang
             mLevel1 = new Level1Screen(this, new EventHandler(Level1ScreenEvent));
             mLevel2 = new Level2Screen(this.Content, new EventHandler(Level2ScreenEvent));
             mBoss1 = new SceneBoss(this, new EventHandler(SceneBossScreenEvent));
+            pauseScreen = Content.Load<Texture2D>("Scenes/Bg1");
             mCurrentScreen = mTitle;
 
 
             //Player
-            player = new Player(this, new Vector2(0,1500), 100, 100, 100, 5, 6, 13, 0.5f);
+            player = new Player(this, new Vector2(0,1500), 100, 100, 100, 5, 8, 13, 0.5f);
             playerSkill = new PlayerSkills(this,Vector2.Zero, new Vector2(0,64), 4, 8, 4, 0.5f);
-            playerAtkEfx = new PlayerAttackEffect(this, Vector2.Zero, 10, 8, 2, 0.6f);
+            playerAtkEfx = new PlayerAttackEffect(this, Vector2.Zero, 5, 8, 3, 0.6f);
             //Ui
             hpBar = new HealthBar(this, Vector2.Zero, 250, 30, 1);
-            staminaBar = new StaminaBar(this, new Vector2(0f, 30), 200, 25, 1);            
+            staminaBar = new StaminaBar(this, new Vector2(0f, 30), 200, 25, 1);
+            pause = Content.Load<SpriteFont>("Ui/File");            
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            //    Exit();
 
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             ks = Keyboard.GetState();
@@ -126,10 +130,10 @@ namespace lastdayInkhumuang
             {
                 GAME_STATE = 1;
             }
-            if (ks.IsKeyDown(Keys.F2))
-            {
-                GAME_STATE = 2;
-            }
+            //if (ks.IsKeyDown(Keys.Escape))
+            //{
+            //    GAME_STATE = 2;
+            //}
             //Console.WriteLine(GAME_STATE);
             oldKs = ks;
             base.Update(gameTime);
@@ -151,7 +155,21 @@ namespace lastdayInkhumuang
                 staminaBar.Draw(_spriteBatch);
                 hpBar.Draw(_spriteBatch);
             }
-            
+            if (GAME_STATE == 2)
+            {
+                _spriteBatch.Draw(pauseScreen, _cameraPosition, Color.Gray * 0.5f);               
+                if (player.GetAlive())
+                {
+                    _spriteBatch.DrawString(pause, "Pause...", _cameraPosition + new Vector2(410, 0), Color.White);
+                    _spriteBatch.DrawString(pause, "Press Enter : Return to Title", _cameraPosition + new Vector2(0, 500), Color.White);
+                }
+                else if (!player.GetAlive())
+                {
+                    _spriteBatch.DrawString(pause, "Fuck u noob...", _cameraPosition + new Vector2(410, 0), Color.White);
+                    _spriteBatch.DrawString(pause, "Press Enter : Respawn", _cameraPosition + new Vector2(0, 500), Color.White);
+                }
+                
+            }
 
             _spriteBatch.End();
 
@@ -166,10 +184,6 @@ namespace lastdayInkhumuang
                 _camera.LookAt(_bgPosition + _cameraPosition);
             }
 
-            //foreach (BoundsCheck bounds in Level1Screen.Bounds)
-            //{
-            //    player.CheckMapColiision(bounds);
-            //}
             //Player
             player.Update(this, ks, oldKs, ms, playerSkill, elapsed);
             playerSkill.Update(elapsed, player, ks, ms);
@@ -177,17 +191,26 @@ namespace lastdayInkhumuang
             staminaBar.Update(elapsed, player, GraphicsDevice);
             hpBar.Update(elapsed, player, GraphicsDevice);           
         }
-
-        protected void Pause(float elapsed)
+        protected void Pause()
         {
-
+            if (ks.IsKeyDown(Keys.Enter))
+            {
+                LOCK_CAM = true;
+                mCurrentScreen = mTitle;
+                _cameraPosition = Vector2.Zero;
+                _camera.LookAt(_bgPosition);
+                GAME_STATE = 0;
+            }            
         }
-
         protected void Restart()
         {
-            //player.Restart();
-            //Console.Clear();
-            //GAME_STATE = 1;
+            if (ks.IsKeyDown(Keys.Enter))
+            {
+                player.Restart();
+                Console.Clear();
+                GAME_STATE = 1;
+            }
+            
         }
 
         public void UpdateCamera(Vector2 move)
@@ -209,11 +232,16 @@ namespace lastdayInkhumuang
         {
             mCurrentScreen = mLevel1;
             oldScreen = mTitle;
+            Level1Screen.ResetScreen(player);
+            _cameraPosition = new Vector2(0, 1200);
+            monsterCount = Level1Screen.Enemy.Count;
         }
         public void Level1ScreenEvent(object obj, EventArgs e)
         {
             mCurrentScreen = mBoss1;
             oldScreen = mLevel1;
+            SceneBoss.ResetScreen(player);
+            monsterCount = 1;
         }
         public void Level2ScreenEvent(object obj, EventArgs e)
         {

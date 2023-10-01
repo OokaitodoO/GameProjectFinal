@@ -304,11 +304,26 @@ namespace lastdayInkhumuang
                 }                    
             }
         }
-        public void CheckMapColiision(BoundsCheck other)
+        float boundTimer;
+        public void CheckMapColiision(BoundsCheck other, float elapsed)
         {
             if (other.Bounds.Intersects(this.Bounds))
             {
                 position = lastPos;
+                if (!outSide)
+                {
+                    boundTimer += elapsed;
+                    if (boundTimer >= 2)
+                    {
+                        speed = 0;
+                        speedToOriginPos = 2;
+                        outSide = true;
+                    }
+                }
+                else
+                {
+                    boundTimer = 0;
+                }
             }
         }
 

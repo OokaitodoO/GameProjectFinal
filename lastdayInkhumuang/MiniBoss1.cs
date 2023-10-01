@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace lastdayInkhumuang
 {
-    internal class MiniBoss1 : Enemy, IGameFunction
+    public class MiniBoss1 : Enemy, IGameFunction
     {
         int attackCount;
         int stateBoss;
@@ -19,12 +19,14 @@ namespace lastdayInkhumuang
         float attakTiming;
         float delaySpear;
         Game1 game;
+
+        public static float hp;
         public MiniBoss1(Game1 game, Vector2 position, int boundHeight, int boundWidth, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, Vector2.Zero, boundHeight, boundWidth, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
         {
             spriteTexture.Load(game.Content, "Boss/Dullaha/Dullahahitn_All_Set", frames, framesRow, framesPerSec);
             speed = 6;
             alive = true;
-            hp = 500;
+            hp = 5;
             attack = false;
             flip = false;
             alive = true;
@@ -43,7 +45,8 @@ namespace lastdayInkhumuang
         {
             if (alive)
             {
-                Console.WriteLine("Hp: " + hp);
+                spriteTexture.SetFramePerSec(7);
+                spriteTexture.Play();
                 switch (stateBoss) 
                 {
                     case 0:
@@ -97,7 +100,7 @@ namespace lastdayInkhumuang
             if (Hitted)
             {
                 delayHitted += elapsed;
-                if (delayHitted >= 1)
+                if (delayHitted >= 0.3)
                 {
                     Hitted = false;
                 }
@@ -108,9 +111,12 @@ namespace lastdayInkhumuang
             }
 
             //Alive
-            if (hp <= 0)
+            if (hp <= 0 && alive)
             {
                 alive = false;
+                spriteTexture.Reset();
+                spriteTexture.SetFramePerSec(3);
+                spriteRow = 4;
                 Game1.monsterCount--;
             }
 
@@ -258,21 +264,34 @@ namespace lastdayInkhumuang
 
         public override void UpdateFrame(float elapsed)
         {
-            spriteTexture.UpdateFrame(elapsed);            
-        }
+            spriteTexture.UpdateFrame(elapsed);
+        }        
         public override void Draw(SpriteBatch spriteBatch)
         {
             if (alive)
             {
                 spriteTexture.DrawFrame(spriteBatch, position, spriteRow, flip);
             }
+            else
+            {                
+                if (spriteTexture.GetFrame() <= 4)
+                {
+                    spriteTexture.DrawFrame(spriteBatch, position, spriteRow, flip);
+                    if (spriteTexture.GetFrame() == 4)
+                    {
+                        spriteTexture.Pause();
+                    }
+                    
+                }
+            }
             
         }
         public void Restart()
         {
+            spriteTexture.SetFramePerSec(7);
             attackCount = 0;
             alive = true;
-            hp = 500;
+            hp = 5;
             attack = false;
             flip = false;
             alive = true;
@@ -284,6 +303,11 @@ namespace lastdayInkhumuang
         public bool GetSpear()
         {
             return speared;
+        }
+
+        public float GetHp()
+        {
+            return hp;
         }
     }
 }

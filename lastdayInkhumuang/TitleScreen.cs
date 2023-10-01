@@ -20,29 +20,30 @@ namespace lastdayInkhumuang
         Vector2 playPos;
         Vector2 creditsPos;
         Vector2 exitPos;
-        const int buttonWidth = 185;
-        const int buttonHeight = 38;
+        const int buttonWidth = 300;
+        const int buttonHeight = 120;
+        const int smallButtHeight = 60;
         public TitleScreen(Game1 game, EventHandler theScreenEvent) : base(theScreenEvent)
         {
             this.game = game;
-            menu = game.Content.Load<Texture2D>("menu");
+            menu = game.Content.Load<Texture2D>("Ui/GameIcon");
             bg = game.Content.Load<Texture2D>("Scenes/Title/logo game solo  0");
-            playPos = new Vector2(250, 250);
+            playPos = new Vector2(200, 250);
             playButton = new Rectangle((int)playPos.X, (int)playPos.Y, buttonWidth, buttonHeight);
-            creditsPos = new Vector2(250, 300);
+            creditsPos = new Vector2(200, 300);
             creditsButton = new Rectangle((int)creditsPos.X, (int)creditsPos.Y, buttonWidth, buttonHeight);
-            exitPos = new Vector2(250, 350);
-            exitButton = new Rectangle((int)exitPos.X, (int)exitPos.Y, buttonWidth, buttonHeight);
+            exitPos = new Vector2(200, 400);
+            exitButton = new Rectangle((int)exitPos.X, (int)exitPos.Y, buttonWidth, smallButtHeight);
         }
-        public void Update(MouseState ms, float elapsed)
+        public void Update(MouseState ms, MouseState oldMs, float elapsed)
         {
-            if (Game1.mouseRec.Intersects(playButton) && ms.LeftButton == ButtonState.Pressed) //Play
+            if (Game1.mouseRec.Intersects(playButton) && ms.LeftButton == ButtonState.Pressed && oldMs.LeftButton != ButtonState.Pressed) //Play
             {
                 Game1.GAME_STATE = 1;                
                 ScreenEvent.Invoke(this, new EventArgs());
                 return;
             }
-            if (Game1.mouseRec.Intersects(exitButton) && ms.LeftButton == ButtonState.Pressed) //Exit
+            if (Game1.mouseRec.Intersects(exitButton) && ms.LeftButton == ButtonState.Pressed && oldMs.LeftButton != ButtonState.Pressed) //Exit
             {
                 game.Exit();                
             }
@@ -61,11 +62,11 @@ namespace lastdayInkhumuang
 
             if (!Game1.mouseRec.Intersects(exitButton)) // Exit
             {
-                spriteBatch.Draw(menu, exitPos, new Rectangle(0, buttonHeight*4, buttonWidth, buttonHeight), Color.White);
+                spriteBatch.Draw(menu, exitPos, new Rectangle(0, buttonHeight + smallButtHeight, buttonWidth, smallButtHeight), Color.White);
             }
             else
             {
-                spriteBatch.Draw(menu, exitPos, new Rectangle(buttonWidth, buttonHeight * 4, buttonWidth, buttonHeight), Color.White);
+                spriteBatch.Draw(menu, exitPos, new Rectangle(buttonWidth, buttonHeight + smallButtHeight, buttonWidth, smallButtHeight), Color.White);
             }
         }
     }

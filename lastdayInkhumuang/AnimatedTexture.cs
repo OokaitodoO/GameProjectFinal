@@ -44,6 +44,10 @@ namespace lastdayInkhumuang
             this.Scale = scale;
             this.Depth = depth;
         }
+        public void SetFramePerSec(int framePerSec)
+        {
+            TimePerFrame = (float)1 / framePerSec;
+        }
         public void Load(ContentManager content, string asset, int frameCount,int frameRow, int framesPerSec)
         {
             framecount = frameCount;

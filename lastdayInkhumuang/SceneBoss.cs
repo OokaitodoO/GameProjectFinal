@@ -19,10 +19,13 @@ namespace lastdayInkhumuang
         public static List<BoundsCheck> Bounds = new List<BoundsCheck>();
         KeyboardState ks;
         KeyboardState oldks;
+        
+       
+
         public SceneBoss(Game1 game,EventHandler theScreenEvent) : base(theScreenEvent)
         {
             bossScene = game.Content.Load<Texture2D>("Scenes/Map_Boss");            
-            Boss.Add(new MiniBoss1(game, new Vector2(), 300, 300, 5, 7, 3, 0.5f));
+            Boss.Add(new MiniBoss1(game, new Vector2(), 300, 300, 5, 7, 4, 0.5f));
             this.game = game;
 
             //MapCollision
@@ -61,7 +64,7 @@ namespace lastdayInkhumuang
                         {
                             ((MiniBoss1)gameObject).Update(elapsed, game.player);
                             ((MiniBoss1)gameObject).CheckColiision(game.player);
-                            ((MiniBoss1)gameObject).UpdateFrame(elapsed);
+                            ((MiniBoss1)gameObject).UpdateFrame(elapsed);                            
                         }                        
                     }                    
                 }
@@ -73,6 +76,24 @@ namespace lastdayInkhumuang
                 {
                     Game1.GAME_STATE = 2;
                 }
+
+                //test
+                //if (Keyboard.GetState().IsKeyDown(Keys.Left))
+                //{
+                //    x -= 5 * elapsed;
+                //}
+                //if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                //{
+                //    x += 5 * elapsed;
+                //}
+                //if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                //{
+                //    y -= 5 * elapsed;
+                //}
+                //if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                //{
+                //    y += 5 * elapsed;
+                //}
             }
             else if (Game1.GAME_STATE == 2)
             {
@@ -115,7 +136,11 @@ namespace lastdayInkhumuang
             spriteBatch.Draw(bossScene, Vector2.Zero, Color.White);
             foreach (GameObject gameObject in Boss)
             {
-                ((MiniBoss1)gameObject).Draw(spriteBatch);
+                if (gameObject.GetType().IsAssignableTo(typeof(MiniBoss1)))
+                {
+                    ((MiniBoss1)gameObject).Draw(spriteBatch);
+                    
+                }                
             }
         }
     }

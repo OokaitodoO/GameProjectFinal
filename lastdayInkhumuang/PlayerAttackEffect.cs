@@ -25,7 +25,6 @@ namespace lastdayInkhumuang
         public Vector2 AtkPosition => position;
         public void Update(float elapsed, Player player)
         {
-            Console.WriteLine("AttackPos: " + position);
             attack = player.attacked;
             position = player.GetPos();
             if (!attack)

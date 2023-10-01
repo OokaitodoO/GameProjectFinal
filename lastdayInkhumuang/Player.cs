@@ -69,7 +69,6 @@ namespace lastdayInkhumuang
         
         public void Update(Game1 game,KeyboardState ks, KeyboardState oldKs, MouseState ms, PlayerSkills skill, float elapsed)
         {
-            Console.WriteLine("PlayerPos: " + position);
             //Console.WriteLine("Attack: " + attacked);
             //Console.WriteLine("Stamina: " + stamina);
 
@@ -272,16 +271,16 @@ namespace lastdayInkhumuang
             dashEffect.Update(elapsed, this);
 
             //Test Hp            
-            if (ks.IsKeyDown(Keys.Down))
-            {
-                hp -= 5;
-                stamina -= 5;
-            }
-            if (ks.IsKeyDown(Keys.Up))
-            {
-                hp += 5;
-                stamina+= 5;
-            }
+            //if (ks.IsKeyDown(Keys.Down))
+            //{
+            //    hp -= 5;
+            //    stamina -= 5;
+            //}
+            //if (ks.IsKeyDown(Keys.Up))
+            //{
+            //    hp += 5;
+            //    stamina+= 5;
+            //}
 
             if (hp >= 100)
             {
@@ -301,7 +300,7 @@ namespace lastdayInkhumuang
             }
             else if (stamina < 100)
             {
-                stamina += elapsed * 2;
+                stamina += elapsed * 4;
             }
         }
 
@@ -510,6 +509,7 @@ namespace lastdayInkhumuang
         public void Restart()
         {
             PlayerSkills.Restart();
+            PlayerDash.SetIsDash(false);
             hp = 100;
             stamina = 100;
             position = startPos;

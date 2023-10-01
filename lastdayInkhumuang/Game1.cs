@@ -20,6 +20,7 @@ namespace lastdayInkhumuang
         KeyboardState ks = new KeyboardState();
         KeyboardState oldKs = new KeyboardState();
         MouseState ms = new MouseState();
+        MouseState oldMs = new MouseState();
         public static Rectangle mouseRec;
 
         public const int TILE_SIZE = 128;
@@ -40,11 +41,12 @@ namespace lastdayInkhumuang
         public SceneBoss mBoss1;
         public Screen mCurrentScreen;
         public Screen oldScreen;
-
+        public FrontObject frontObject;
         
 
         //Player
         public Player player;
+        public Player_Boss_StatusBar playerStatusBar;
         public PlayerSkills playerSkill;
         public PlayerAttackEffect playerAtkEfx;
 
@@ -52,6 +54,8 @@ namespace lastdayInkhumuang
         HealthBar hpBar;
         StaminaBar staminaBar;
         SpriteFont pause;
+        Texture2D Cursor;
+        Vector2 cursorPos;
 
         //Enemy
         public static int monsterCount;
@@ -62,7 +66,7 @@ namespace lastdayInkhumuang
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            IsMouseVisible = true;
+            IsMouseVisible = false ;
         }
 
         protected override void Initialize()
@@ -70,6 +74,7 @@ namespace lastdayInkhumuang
             _graphics.PreferredBackBufferHeight = MAP_HEIGHT/3; //600
             _graphics.PreferredBackBufferWidth = (int)MAP_WIDTH/3; //1066
             _graphics.ApplyChanges();
+
 
             var viewportadapter = new BoxingViewportAdapter(Window, GraphicsDevice, MAP_WIDTH/3, MAP_HEIGHT/3);
             _camera = new OrthographicCamera(viewportadapter);
@@ -81,10 +86,11 @@ namespace lastdayInkhumuang
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _cameraPosition = new Vector2(0, 1200);
+            _cameraPosition = new Vector2(0, 0);
             mouseRec = new Rectangle(0,0, 1,1);
 
             //Scenes
+            frontObject = new FrontObject(this);
             mTitle = new TitleScreen(this, new EventHandler(TitleScreenEvent));
             mLevel1 = new Level1Screen(this, new EventHandler(Level1ScreenEvent));
             mLevel2 = new Level2Screen(this.Content, new EventHandler(Level2ScreenEvent));
@@ -98,8 +104,10 @@ namespace lastdayInkhumuang
             playerSkill = new PlayerSkills(this,Vector2.Zero, new Vector2(0,64), 4, 8, 4, 0.5f);
             playerAtkEfx = new PlayerAttackEffect(this, Vector2.Zero, 5, 8, 3, 0.6f);
             //Ui
-            hpBar = new HealthBar(this, Vector2.Zero, 250, 30, 1);
-            staminaBar = new StaminaBar(this, new Vector2(0f, 30), 200, 25, 1);
+            playerStatusBar = new Player_Boss_StatusBar(this, Vector2.Zero, 580,  190, 1f);
+            Cursor = Content.Load<Texture2D>("Ui/button&-cursor");
+            //hpBar = new HealthBar(this, Vector2.Zero, 250, 30, 1);
+            //staminaBar = new StaminaBar(this, new Vector2(0f, 30), 200, 25, 1);
             pause = Content.Load<SpriteFont>("Ui/File");            
         }
 
@@ -107,18 +115,20 @@ namespace lastdayInkhumuang
         {
             //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             //    Exit();
-
+            Console.WriteLine(cursorPos);
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             ks = Keyboard.GetState();
             ms = Mouse.GetState();
             mouseRec.Location = ms.Position;
+            cursorPos.X = ms.Position.X + _cameraPosition.X;
+            cursorPos.Y = ms.Position.Y + _cameraPosition.Y;
             //Scenes
             mCurrentScreen.Update(gameTime, elapsed, player);
 
             switch (GAME_STATE)
             {
                 case 0:
-                    mTitle.Update(ms, elapsed);
+                    mTitle.Update(ms, oldMs, elapsed);
                     break;
                 case 1:
                     GamePlay(elapsed);
@@ -136,6 +146,7 @@ namespace lastdayInkhumuang
             //}
             //Console.WriteLine(GAME_STATE);
             oldKs = ks;
+            oldMs = ms;
             base.Update(gameTime);
         }
 
@@ -151,9 +162,16 @@ namespace lastdayInkhumuang
             {
                 player.Draw(_spriteBatch);
                 playerSkill.Draw(_spriteBatch);
-                playerAtkEfx.Draw(_spriteBatch);
-                staminaBar.Draw(_spriteBatch);
-                hpBar.Draw(_spriteBatch);
+                playerAtkEfx.Draw(_spriteBatch);               
+                //staminaBar.Draw(_spriteBatch);
+                //hpBar.Draw(_spriteBatch);
+            }
+
+            frontObject.Draw(_spriteBatch, player, this);
+
+            if (mCurrentScreen != mTitle)
+            {
+                playerStatusBar.Draw(_spriteBatch);
             }
             if (GAME_STATE == 2)
             {
@@ -165,12 +183,21 @@ namespace lastdayInkhumuang
                 }
                 else if (!player.GetAlive())
                 {
-                    _spriteBatch.DrawString(pause, "Fuck u noob...", _cameraPosition + new Vector2(410, 0), Color.White);
+                    _spriteBatch.DrawString(pause, "Nice try...", _cameraPosition + new Vector2(410, 0), Color.White);
                     _spriteBatch.DrawString(pause, "Press Enter : Respawn", _cameraPosition + new Vector2(0, 500), Color.White);
                 }
                 
             }
 
+            if (ms.LeftButton == ButtonState.Pressed)
+            {
+                _spriteBatch.Draw(Cursor, cursorPos, new Rectangle(18, 17, 16, 22), Color.White, 0f, new Vector2(3, 5), new Vector2(2f, 2f), 0, 0);
+            }
+            else
+            {
+                _spriteBatch.Draw(Cursor, cursorPos, new Rectangle(0, 17, 16, 22), Color.White, 0f, new Vector2(3, 5), new Vector2(2f, 2f), 0, 0);
+            }
+            
             _spriteBatch.End();
 
             base.Draw(gameTime);
@@ -178,6 +205,7 @@ namespace lastdayInkhumuang
 
         protected void GamePlay(float elapsed)
         {
+            frontObject.Update();
             //camera
             if (!LOCK_CAM)
             {
@@ -185,11 +213,12 @@ namespace lastdayInkhumuang
             }
 
             //Player
+            playerStatusBar.Update(elapsed, player, GraphicsDevice, this);
             player.Update(this, ks, oldKs, ms, playerSkill, elapsed);
             playerSkill.Update(elapsed, player, ks, ms);
             playerAtkEfx.Update(elapsed, player);                       
-            staminaBar.Update(elapsed, player, GraphicsDevice);
-            hpBar.Update(elapsed, player, GraphicsDevice);           
+            //staminaBar.Update(elapsed, player, GraphicsDevice);
+            //hpBar.Update(elapsed, player, GraphicsDevice);           
         }
         protected void Pause()
         {

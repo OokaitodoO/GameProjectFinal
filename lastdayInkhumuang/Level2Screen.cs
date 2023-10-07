@@ -17,7 +17,7 @@ namespace lastdayInkhumuang
 
         public Level2Screen(ContentManager content, EventHandler theScreenEvent) : base(theScreenEvent)
         {
-            level2 = content.Load<Texture2D>("Scenes/draft-map");
+           // level2 = content.Load<Texture2D>("Scenes/draft-map");
             
         }
         public override void Update(GameTime gameTime, float elapsed, Player player)

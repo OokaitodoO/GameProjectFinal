@@ -34,6 +34,7 @@ namespace lastdayInkhumuang
 
         //Scenes
         //public static string Map;
+        public static bool changeScreen = false;
         public Texture2D pauseScreen;
         public TitleScreen mTitle;
         public Level1Screen mLevel1;
@@ -72,7 +73,7 @@ namespace lastdayInkhumuang
         protected override void Initialize()
         {
             _graphics.PreferredBackBufferHeight = MAP_HEIGHT/3; //600
-            _graphics.PreferredBackBufferWidth = (int)MAP_WIDTH/3; //1066
+            _graphics.PreferredBackBufferWidth = (int)MAP_WIDTH/3; //1066            
             _graphics.ApplyChanges();
 
 
@@ -115,7 +116,6 @@ namespace lastdayInkhumuang
         {
             //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             //    Exit();
-            Console.WriteLine(cursorPos);
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             ks = Keyboard.GetState();
             ms = Mouse.GetState();
@@ -152,12 +152,14 @@ namespace lastdayInkhumuang
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             var transformMatrix = _camera.GetViewMatrix();
             _spriteBatch.Begin(transformMatrix: transformMatrix);
+            //Screen
             mCurrentScreen.Draw(_spriteBatch);
 
+            //Player
             if (mCurrentScreen != mTitle)
             {
                 player.Draw(_spriteBatch);
@@ -167,8 +169,10 @@ namespace lastdayInkhumuang
                 //hpBar.Draw(_spriteBatch);
             }
 
+            //FrontObj
             frontObject.Draw(_spriteBatch, player, this);
 
+            //Pause
             if (mCurrentScreen != mTitle)
             {
                 playerStatusBar.Draw(_spriteBatch);
@@ -189,6 +193,7 @@ namespace lastdayInkhumuang
                 
             }
 
+            //Cursor
             if (ms.LeftButton == ButtonState.Pressed)
             {
                 _spriteBatch.Draw(Cursor, cursorPos, new Rectangle(18, 17, 16, 22), Color.White, 0f, new Vector2(3, 5), new Vector2(2f, 2f), 0, 0);
@@ -205,7 +210,7 @@ namespace lastdayInkhumuang
 
         protected void GamePlay(float elapsed)
         {
-            frontObject.Update();
+            frontObject.Update(elapsed);
             //camera
             if (!LOCK_CAM)
             {
@@ -261,15 +266,20 @@ namespace lastdayInkhumuang
         {
             mCurrentScreen = mLevel1;
             oldScreen = mTitle;
+            changeScreen = true;
+            FrontObject.timer = 1;
             Level1Screen.ResetScreen(player);
             _cameraPosition = new Vector2(0, 1200);
-            monsterCount = Level1Screen.Enemy.Count;
+            monsterCount = Level1Screen.Enemy.Count;                        
         }
         public void Level1ScreenEvent(object obj, EventArgs e)
         {
             mCurrentScreen = mBoss1;
             oldScreen = mLevel1;
+            changeScreen = true;
+            FrontObject.timer = 1;
             SceneBoss.ResetScreen(player);
+            _cameraPosition = new Vector2(0, 0);
             monsterCount = 1;
         }
         public void Level2ScreenEvent(object obj, EventArgs e)

@@ -26,7 +26,7 @@ namespace lastdayInkhumuang
             spriteTexture.Load(game.Content, "Boss/Dullaha/Dullahahitn_All_Set", frames, framesRow, framesPerSec);
             speed = 6;
             alive = true;
-            hp = 5;
+            hp = 500;
             attack = false;
             flip = false;
             alive = true;
@@ -291,7 +291,7 @@ namespace lastdayInkhumuang
             spriteTexture.SetFramePerSec(7);
             attackCount = 0;
             alive = true;
-            hp = 5;
+            hp = 500;
             attack = false;
             flip = false;
             alive = true;

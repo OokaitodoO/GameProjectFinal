@@ -34,56 +34,10 @@ namespace lastdayInkhumuang
 
         public void Update(float elapsed, Player player, KeyboardState ks, MouseState ms)
         {            
-            if (ks.IsKeyDown(Keys.E) && !skilled)
+            if (ks.IsKeyDown(Keys.E) && !skilled && !player.attacked)
             {
                 skilled = true;
-            }
-            //if (skilled)
-            //{
-            //    if (!released)
-            //    {
-            //        spriteTexture.Play();
-            //    }
-            //    spriteTexture.UpdateFrame(elapsed);
-            //    if (spriteTexture.GetFrame() == 2)
-            //    {
-            //        spriteTexture.Pause(3, spriteRow);
-            //        released = true;
-            //    }
-
-            //    if (direction == "Right")
-            //    {
-            //        spriteRow = 1;
-            //        if (released)
-            //        {
-            //            position += new Vector2(SPEED, 0f);
-            //        }
-            //    }
-            //    else if (direction == "Left")
-            //    {
-            //        spriteRow = 2;
-            //        if (released)
-            //        {
-            //            position -= new Vector2(SPEED, 0f);
-            //        }
-            //    }
-            //    else if (direction == "Up" && released)
-            //    {
-            //        spriteRow = 3;
-            //        if (released)
-            //        {
-            //            position -= new Vector2(0f, SPEED);
-            //        }
-            //    }
-            //    else if (direction == "Down" && released)
-            //    {
-            //        spriteRow = 4;
-            //        if (released)
-            //        {
-            //            position += new Vector2(0f, SPEED);
-            //        }
-            //    }
-            //}
+            }            
 
             if (!released)
             {

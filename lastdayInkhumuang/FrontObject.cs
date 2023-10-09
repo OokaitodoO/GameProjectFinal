@@ -47,8 +47,7 @@ namespace lastdayInkhumuang
         }        
         public void Update(float elapsed) 
         {
-            //this.elapsed = elapsed;
-            Console.WriteLine(timer);
+            //this.elapsed = elapsed;            
             boss1HpWidth = (MiniBoss1.hp / boss1_MaxHp) * boss1_MaxHpWidth;
 
             if (timer > 0)
@@ -57,6 +56,7 @@ namespace lastdayInkhumuang
             }
             if (timer <= 0)
             {
+                timer = 0;
                 Game1.changeScreen = false;
             }
         }
@@ -87,7 +87,7 @@ namespace lastdayInkhumuang
             //DrawFade
             if (Game1.changeScreen)
             {
-                spriteBatch.Draw(fade, Game1._cameraPosition, Color.Black * timer);
+                spriteBatch.Draw(fade, Game1._cameraPosition - new Vector2(30, 30), Color.Black * timer);
             }
         }
     }

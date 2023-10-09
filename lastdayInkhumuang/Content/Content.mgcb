@@ -145,6 +145,18 @@
 /processorParam:TextureFormat=Color
 /build:Scenes/Map_Scene1_NoRoof.png
 
+#begin Scenes/Map_Scene3_Layout.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Scenes/Map_Scene3_Layout.png
+
 #begin Scenes/Map_TileSet_Object_RoofOnly.png
 /importer:TextureImporter
 /processor:TextureProcessor

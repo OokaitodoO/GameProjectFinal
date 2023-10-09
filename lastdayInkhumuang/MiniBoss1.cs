@@ -11,6 +11,7 @@ namespace lastdayInkhumuang
 {
     public class MiniBoss1 : Enemy, IGameFunction
     {
+        bool IsOnPos = false;
         int attackCount;
         int stateBoss;
         bool readySkill;
@@ -19,11 +20,14 @@ namespace lastdayInkhumuang
         float attakTiming;
         float delaySpear;
         Game1 game;
+        SpriteFont BossInfo;
 
         public static float hp;
         public MiniBoss1(Game1 game, Vector2 position, int boundHeight, int boundWidth, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, Vector2.Zero, boundHeight, boundWidth, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
         {
             spriteTexture.Load(game.Content, "Boss/Dullaha/Dullahahitn_All_Set", frames, framesRow, framesPerSec);
+            this.position = position;
+            originPos = position;
             speed = 6;
             alive = true;
             hp = 500;
@@ -33,9 +37,11 @@ namespace lastdayInkhumuang
             speared = false;
             readySkill = false;
             spearHit = false;
-            stateBoss = 0; // 0: NormalAttack | 1: Skill
+            stateBoss = 2; // 0: NormalAttack | 1: Skill | 2: cutscenes
             this.game = game;
             spriteRow = 3;
+
+            BossInfo = game.Content.Load<SpriteFont>("Ui/File");
         }
 
         public override Rectangle Bounds => new Rectangle((int)position.X, (int)position.Y + 120, boundWidth, boundHeight - 120);
@@ -43,9 +49,13 @@ namespace lastdayInkhumuang
         
         public void Update(float elapsed, Player player) 
         {
+            Console.WriteLine("StateBoss: " + stateBoss);
             if (alive)
             {
-                spriteTexture.SetFramePerSec(7);
+                if (!Game1.IsCutscenes)
+                {
+                    spriteTexture.SetFramePerSec(7);                    
+                }
                 spriteTexture.Play();
                 switch (stateBoss) 
                 {
@@ -54,6 +64,9 @@ namespace lastdayInkhumuang
                         break;
                     case 1:
                         SpearAttack(player, elapsed);
+                        break;
+                    case 2:
+                        CutScene(elapsed);
                         break;
                     default: 
                         break;
@@ -221,6 +234,34 @@ namespace lastdayInkhumuang
             
         }
 
+        float timer;
+        public void CutScene(float elapsed)
+        {                        
+            if (position.X > Game1.MAP_WIDTH/3 - 450 && !IsOnPos)
+            {
+                spriteRow = 3;
+                flip = true;
+                position.X -= 3;
+                spriteTexture.SetFramePerSec(7);
+            }
+            else if(position.X <= Game1.MAP_WIDTH / 3 - 450 && !IsOnPos)
+            {
+                spriteRow = 2;
+                flip = true;
+                IsOnPos = true;
+                spriteTexture.Reset();
+            }
+            if (IsOnPos)
+            {
+                timer += elapsed;
+                if (timer >= 2)
+                {
+                    stateBoss = 0;
+                    Game1.IsCutscenes = false;
+                }                
+            }
+            
+        }
         public override void GotDamage(int damage)
         {
             if (alive && stateBoss == 0)
@@ -284,10 +325,18 @@ namespace lastdayInkhumuang
                     
                 }
             }
-            
+            if (Game1.IsCutscenes)
+            {
+                spriteBatch.DrawString(BossInfo, "-Dullahan-", new Vector2((Game1.MAP_WIDTH/3)/2 - 100, 50), Color.Lavender);
+                spriteBatch.DrawString(BossInfo, "-Quan kha mhar-", new Vector2((Game1.MAP_WIDTH / 3) / 2 - 180, 150), Color.Lavender);
+            }
         }
         public void Restart()
         {
+            timer = 0;
+            position = originPos;
+            IsOnPos = false;
+            Game1.IsCutscenes = true;
             spriteTexture.SetFramePerSec(7);
             attackCount = 0;
             alive = true;
@@ -297,7 +346,7 @@ namespace lastdayInkhumuang
             alive = true;
             readySkill = false;
             speared = false;
-            stateBoss = 0; // 0: NormalAttack | 1: Skill
+            stateBoss = 2; // 0: NormalAttack | 1: Skill | 2: CutScene
         }
 
         public bool GetSpear()

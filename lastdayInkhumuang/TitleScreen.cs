@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,7 @@ namespace lastdayInkhumuang
         Vector2 creditsPos;
         Vector2 exitPos;
 
+        bool warning;
         bool Isintro;
         bool Islogoteam;
         bool done;
@@ -50,23 +52,19 @@ namespace lastdayInkhumuang
             Isintro = true;
             Islogoteam = true;
             done = false;
+            warning = false;
         }
         public void Update(MouseState ms, MouseState oldMs, float elapsed)
-        {
-            Console.WriteLine(timer);
-            Console.WriteLine(done);
-
+        {            
             if (!Isintro)
             {
                 if (done)
                 {
                     if (Game1.mouseRec.Intersects(playButton) && ms.LeftButton == ButtonState.Pressed && oldMs.LeftButton != ButtonState.Pressed) //Play
                     {
-
-                        Game1.GAME_STATE = 1;
+                        //Game1.GAME_STATE = 1;
                         ScreenEvent.Invoke(this, new EventArgs());
                         return;
-
                     }
                     if (Game1.mouseRec.Intersects(exitButton) && ms.LeftButton == ButtonState.Pressed && oldMs.LeftButton != ButtonState.Pressed) //Exit
                     {
@@ -133,6 +131,7 @@ namespace lastdayInkhumuang
                 }
                 if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 {
+                    done = false;
                     Isintro = false;
                     timer = 1;
                 }
@@ -162,6 +161,19 @@ namespace lastdayInkhumuang
                 {
                     spriteBatch.Draw(menu, exitPos, new Rectangle(buttonWidth, buttonHeight + smallButtHeight, buttonWidth, smallButtHeight), Color.White);
                 }
+
+                if (warning)
+                {
+                    if (!Game1.mouseRec.Intersects(exitButton)) // Credit
+                    {
+                        spriteBatch.Draw(menu, exitPos, new Rectangle(0, buttonHeight, buttonWidth, smallButtHeight), Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(menu, exitPos, new Rectangle(buttonWidth, buttonHeight, buttonWidth, smallButtHeight), Color.White);
+                    }
+                }
+
                 spriteBatch.Draw(fadeBg, Vector2.Zero, Color.Black * timer);
             }
             else

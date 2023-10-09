@@ -68,16 +68,18 @@ namespace lastdayInkhumuang
         public Vector2 Position => position;
         
         public void Update(Game1 game,KeyboardState ks, KeyboardState oldKs, MouseState ms, PlayerSkills skill, float elapsed)
-        {
-            //Console.WriteLine("Attack: " + attacked);
-            //Console.WriteLine("Stamina: " + stamina);
+        {           
 
             lastPos = position;
             CheckDirection(ms);
             //Attack (not yet complete)
-            ComboAttack(ms, elapsed);           
+            if (!skilled)
+            {
+                ComboAttack(ms, elapsed);
+            }
+                      
             //Skill
-            if (ks.IsKeyDown(Keys.E) && !skilled && !skill.GetSkilled())
+            if (ks.IsKeyDown(Keys.E) && !skilled && !skill.GetSkilled() && !attacked)
             {
                 spriteTexture.Reset();
                 skilled = true;
@@ -203,6 +205,7 @@ namespace lastdayInkhumuang
                 }
                 if (ks.IsKeyUp(Keys.W) && ks.IsKeyUp(Keys.A) && ks.IsKeyUp(Keys.S) && ks.IsKeyUp(Keys.D))
                 {
+                    attacked = false;
                     move = false;
                     if (direction == "Left")
                     {
@@ -268,19 +271,7 @@ namespace lastdayInkhumuang
                     dash = false;
                 }
             }
-            dashEffect.Update(elapsed, this);
-
-            //Test Hp            
-            //if (ks.IsKeyDown(Keys.Down))
-            //{
-            //    hp -= 5;
-            //    stamina -= 5;
-            //}
-            //if (ks.IsKeyDown(Keys.Up))
-            //{
-            //    hp += 5;
-            //    stamina+= 5;
-            //}
+            dashEffect.Update(elapsed, this);           
 
             if (hp >= 100)
             {
@@ -517,6 +508,12 @@ namespace lastdayInkhumuang
             chainCombo = false;
             skilled = false;
             dash = false;
+            spriteTexture.Reset();
+        }
+
+        public override void ResetFrame()
+        {
+            SpriteRow = 13;
             spriteTexture.Reset();
         }
 

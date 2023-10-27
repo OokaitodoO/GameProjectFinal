@@ -30,6 +30,8 @@ namespace lastdayInkhumuang
             if (!attack)
             {
                 direction = player.GetDirection();
+                Sfx.InsStopSfx(3);
+                Sfx.InsStopSfx(18);
                 spriteTexture.Reset();
                 verticalAttack.Reset();                
             }
@@ -159,19 +161,31 @@ namespace lastdayInkhumuang
         public void CheckColiision(GameObject other)
         {
             if (other.Bounds.Intersects(this.Bounds))
-            {
+            {                
                 if (other.GetType().IsAssignableTo(typeof(Melee_Enemy)) && attack)
                 {
+                    Sfx.InsPlaySfx(3);
                     ((Melee_Enemy)other).GotDamage(20);
                 }
                 if (other.GetType().IsAssignableTo(typeof(Range_Enemy)) && attack)
                 {
+                    Sfx.InsPlaySfx(3);
                     ((Range_Enemy)other).GotDamage(20);
                 }
                 if (other.GetType().IsAssignableTo(typeof(MiniBoss1)) && attack)
                 {
+                    Sfx.InsPlaySfx(3);
                     ((MiniBoss1)other).GotDamage(15);
                 }
+                if (other.GetType().IsAssignableTo(typeof(MiniBoss2)) && attack)
+                {
+                    Sfx.InsPlaySfx(3);
+                    ((MiniBoss2)other).GotDamage(15);
+                }
+            }
+            else if (attack)
+            {
+                Sfx.InsPlaySfx(18);
             }
         }
         public override void Draw(SpriteBatch spriteBatch)

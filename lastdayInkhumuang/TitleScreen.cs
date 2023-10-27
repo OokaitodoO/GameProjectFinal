@@ -13,6 +13,7 @@ namespace lastdayInkhumuang
     public class TitleScreen : Screen
     {
         Game1 game;
+        Texture2D gameName;
         Texture2D menu;
         Texture2D bg;
         Texture2D logoTeam;
@@ -31,6 +32,8 @@ namespace lastdayInkhumuang
         bool done;
         float timer;
 
+        bool IsPlaySfx;
+
         const int buttonWidth = 300;
         const int buttonHeight = 120;
         const int smallButtHeight = 60;
@@ -42,34 +45,58 @@ namespace lastdayInkhumuang
             logoTeam = game.Content.Load<Texture2D>("Ui/GroupLogo");
             logoMono = game.Content.Load<Texture2D>("Ui/MonogameIcon");
             fadeBg = game.Content.Load<Texture2D>("Scenes/Bg1");
+            gameName = game.Content.Load<Texture2D>("Ui/lastlogo");
             playPos = new Vector2(200, 250);
             playButton = new Rectangle((int)playPos.X, (int)playPos.Y, buttonWidth, buttonHeight);
-            creditsPos = new Vector2(200, 300);
-            creditsButton = new Rectangle((int)creditsPos.X, (int)creditsPos.Y, buttonWidth, buttonHeight);
-            exitPos = new Vector2(200, 400);
+            creditsPos = new Vector2(200, 400);
+            creditsButton = new Rectangle((int)creditsPos.X, (int)creditsPos.Y, buttonWidth, smallButtHeight);
+            exitPos = new Vector2(200, 500);
             exitButton = new Rectangle((int)exitPos.X, (int)exitPos.Y, buttonWidth, smallButtHeight);
             timer = 0;
             Isintro = true;
             Islogoteam = true;
             done = false;
             warning = false;
+
+            IsPlaySfx = false;
         }
         public void Update(MouseState ms, MouseState oldMs, float elapsed)
         {            
             if (!Isintro)
             {
+                Sfx.InsPlaySfx(19);
+                if ((Game1.mouseRec.Intersects(playButton) || Game1.mouseRec.Intersects(creditsButton) || Game1.mouseRec.Intersects(exitButton)) && !IsPlaySfx)
+                {
+                    Sfx.PlaySfx(7);
+                    IsPlaySfx = true;
+                }
+                else if (!(Game1.mouseRec.Intersects(playButton) || Game1.mouseRec.Intersects(creditsButton) || Game1.mouseRec.Intersects(exitButton)))
+                {
+                    IsPlaySfx = false;
+                }
                 if (done)
                 {
                     if (Game1.mouseRec.Intersects(playButton) && ms.LeftButton == ButtonState.Pressed && oldMs.LeftButton != ButtonState.Pressed) //Play
                     {
                         //Game1.GAME_STATE = 1;
+                        Sfx.PlaySfx(0);
                         ScreenEvent.Invoke(this, new EventArgs());
+                        return;
+                    }                    
+                    if (Game1.mouseRec.Intersects(creditsButton) && ms.LeftButton == ButtonState.Pressed && oldMs.LeftButton != ButtonState.Pressed)
+                    {
+                        Sfx.PlaySfx(0);
+                        game.mCurrentScreen = game.mCredit;
+                        CreditsScreen.SetCreditsPos();
+                        Game1.changeScreen = true;
+                        FrontObject.timer = 1;
                         return;
                     }
                     if (Game1.mouseRec.Intersects(exitButton) && ms.LeftButton == ButtonState.Pressed && oldMs.LeftButton != ButtonState.Pressed) //Exit
                     {
+                        Sfx.PlaySfx(0);
                         game.Exit();
-                    }
+                    }                    
                 }
                 else
                 {
@@ -83,7 +110,6 @@ namespace lastdayInkhumuang
                         timer = 0;
                     }
                 }
-               
             }
             else
             {
@@ -144,6 +170,7 @@ namespace lastdayInkhumuang
             if (!Isintro)
             {                
                 spriteBatch.Draw(bg, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, new Vector2(1.1f, 1f), 0, 0);
+                spriteBatch.Draw(gameName, new Vector2(80, 0), Color.White);
                 if (!Game1.mouseRec.Intersects(playButton)) //play
                 {
                     spriteBatch.Draw(menu, playPos, new Rectangle(0, 0, buttonWidth, buttonHeight), Color.White);
@@ -162,16 +189,13 @@ namespace lastdayInkhumuang
                     spriteBatch.Draw(menu, exitPos, new Rectangle(buttonWidth, buttonHeight + smallButtHeight, buttonWidth, smallButtHeight), Color.White);
                 }
 
-                if (warning)
+                if (!Game1.mouseRec.Intersects(creditsButton)) // Credit
                 {
-                    if (!Game1.mouseRec.Intersects(exitButton)) // Credit
-                    {
-                        spriteBatch.Draw(menu, exitPos, new Rectangle(0, buttonHeight, buttonWidth, smallButtHeight), Color.White);
-                    }
-                    else
-                    {
-                        spriteBatch.Draw(menu, exitPos, new Rectangle(buttonWidth, buttonHeight, buttonWidth, smallButtHeight), Color.White);
-                    }
+                    spriteBatch.Draw(menu, creditsPos, new Rectangle(0, buttonHeight, buttonWidth, smallButtHeight), Color.White);
+                }
+                else
+                {
+                    spriteBatch.Draw(menu, creditsPos, new Rectangle(buttonWidth, buttonHeight, buttonWidth, smallButtHeight), Color.White);
                 }
 
                 spriteBatch.Draw(fadeBg, Vector2.Zero, Color.Black * timer);

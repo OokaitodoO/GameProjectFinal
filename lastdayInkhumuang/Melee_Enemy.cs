@@ -14,6 +14,8 @@ namespace lastdayInkhumuang
         Vector2 lastPos;
         const int KNOCKBACK = 100;
         const float REGEN_HP = 0.2f;
+
+        bool isPlaySound = false;
         //const int SIZE_HEIGHT = 180;
         //const int SIZE_WIDTH = 150;
         public Melee_Enemy(Game1 game, Vector2 position, Vector2 tileLocation, int boundHeight, int boundWidth, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, tileLocation, boundHeight, boundWidth, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
@@ -224,6 +226,7 @@ namespace lastdayInkhumuang
                 //attack
                 if (attack && spriteTexture.GetFrame() == 4)
                 {
+                    
                     dealDamage = true;
                     attack = false;
                 }
@@ -293,7 +296,7 @@ namespace lastdayInkhumuang
         }
 
         public override void CheckColiision(GameObject player)
-        {           
+        {            
             if (player.Bounds.Intersects(this.Bounds))
             {
                 if (player.GetType().IsAssignableTo(typeof(Player)) && !attack && alive)
@@ -301,7 +304,15 @@ namespace lastdayInkhumuang
                         spriteRow = 3;
                         spriteTexture.Reset();
                         attack = true;                                        
-                }                    
+                }
+                if (dealDamage && alive)
+                {
+                    Sfx.PlaySfx(9);
+                }
+            }
+            if (dealDamage && !player.Bounds.Intersects(this.Bounds))
+            {
+                Sfx.PlaySfx(18);
             }
         }
         float boundTimer;

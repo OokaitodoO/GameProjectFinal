@@ -22,6 +22,8 @@ namespace lastdayInkhumuang
         Game1 game;
         SpriteFont BossInfo;
 
+        Texture2D font;
+
         public static float hp;
         public MiniBoss1(Game1 game, Vector2 position, int boundHeight, int boundWidth, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, Vector2.Zero, boundHeight, boundWidth, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
         {
@@ -42,6 +44,7 @@ namespace lastdayInkhumuang
             spriteRow = 3;
 
             BossInfo = game.Content.Load<SpriteFont>("Ui/File");
+            font = game.Content.Load<Texture2D>("Ui/Text/spritesheetFont");
         }
 
         public override Rectangle Bounds => new Rectangle((int)position.X, (int)position.Y + 120, boundWidth, boundHeight - 120);
@@ -49,7 +52,6 @@ namespace lastdayInkhumuang
         
         public void Update(float elapsed, Player player) 
         {
-            Console.WriteLine("StateBoss: " + stateBoss);
             if (alive)
             {
                 if (!Game1.IsCutscenes)
@@ -79,6 +81,7 @@ namespace lastdayInkhumuang
         {
             if (!attack)
             {
+                Sfx.InsPlaySfx(6);
                 if (position.X + 64 < player.GetPos().X) //Right
                 {
                     position.X += speed;
@@ -102,6 +105,10 @@ namespace lastdayInkhumuang
                     spriteRow = 3;
                 }
             }
+            else
+            {
+                Sfx.InsStopSfx(6);
+            }
            
 
             //Hitted
@@ -109,6 +116,7 @@ namespace lastdayInkhumuang
             {
                 Hitted = true;
                 hp -= damage;
+                Sfx.PlaySfx(4);
             }
             if (Hitted)
             {
@@ -126,19 +134,22 @@ namespace lastdayInkhumuang
             //Alive
             if (hp <= 0 && alive)
             {
+                Sfx.PlaySfx(25);
                 alive = false;
                 spriteTexture.Reset();
                 spriteTexture.SetFramePerSec(3);
                 spriteRow = 4;
                 Game1.monsterCount--;
+                Sfx.InsStopSfx(6);                
             }
 
             //Attack
-            if (attack && spriteTexture.GetFrame() == 4)
+            if (attack && spriteTexture.GetFrame() == 3)
             {
                 attackCount++;
                 dealDamage = true;
                 attack = false;
+                Sfx.PlaySfx(9);
             }
             else
             {
@@ -175,16 +186,21 @@ namespace lastdayInkhumuang
                 if (position.X + boundWidth < 0 || position.X > game.GraphicsDevice.Viewport.Width + Game1._cameraPosition.X)
                 {
                     readySkill = true;
+                    Sfx.PlaySfx(5);
                 }
             }
             else
             {
                 if (!speared)
-                {
+                {                    
                     delaySpear += elapsed;
                     if (delaySpear >= 3)
                     {
                         speared = true;
+                    }
+                    if (delaySpear >= 2.5)
+                    {
+                        Sfx.InsPlaySfx(22);
                     }
                 }
                 else
@@ -199,6 +215,7 @@ namespace lastdayInkhumuang
                 }
                 else if (direction == "Right" && speared)
                 {
+                    Sfx.InsPlaySfx(6);                    
                     spriteRow = 1;
                     flip = true;
                     position -= new Vector2(speed*3, 0f);
@@ -209,6 +226,7 @@ namespace lastdayInkhumuang
                         spearHit = false;
                         attackCount = 0;
                         stateBoss = 0;
+                        Sfx.InsStopSfx(6);
                     }                    
                 }
                 if (direction == "Left" && !speared)
@@ -217,6 +235,7 @@ namespace lastdayInkhumuang
                 }
                 else if (direction == "Left" && speared)
                 {
+                    Sfx.InsPlaySfx(6);
                     spriteRow = 1;
                     flip = false;
                     position += new Vector2(speed*3, 0f);
@@ -227,6 +246,7 @@ namespace lastdayInkhumuang
                         spearHit = false;
                         attackCount = 0;
                         stateBoss = 0;
+                        Sfx.InsStopSfx(6);
                     }                   
                 }
             }
@@ -239,6 +259,7 @@ namespace lastdayInkhumuang
         {                        
             if (position.X > Game1.MAP_WIDTH/3 - 450 && !IsOnPos)
             {
+                Sfx.InsPlaySfx(6);
                 spriteRow = 3;
                 flip = true;
                 position.X -= 3;
@@ -246,6 +267,8 @@ namespace lastdayInkhumuang
             }
             else if(position.X <= Game1.MAP_WIDTH / 3 - 450 && !IsOnPos)
             {
+                Sfx.InsStopSfx(6);
+                Sfx.InsPlaySfx(5);
                 spriteRow = 2;
                 flip = true;
                 IsOnPos = true;
@@ -257,6 +280,7 @@ namespace lastdayInkhumuang
                 if (timer >= 2)
                 {
                     stateBoss = 0;
+                    Sfx.InsStopSfx(6);
                     Game1.IsCutscenes = false;
                 }                
             }
@@ -274,7 +298,8 @@ namespace lastdayInkhumuang
 
         public override bool DealDamage()
         {
-            return base.DealDamage();
+            //return base.DealDamage();
+            return dealDamage;
         }
 
         public override void CheckColiision(GameObject player)
@@ -290,6 +315,7 @@ namespace lastdayInkhumuang
                 else if (player.GetType().IsAssignableTo(typeof(Player)) && speared && !dealDamage)
                 {
                     dealDamage = true;
+                    Sfx.PlaySfx(16);
                 }
                 else
                 {
@@ -327,8 +353,9 @@ namespace lastdayInkhumuang
             }
             if (Game1.IsCutscenes)
             {
-                spriteBatch.DrawString(BossInfo, "-Dullahan-", new Vector2((Game1.MAP_WIDTH/3)/2 - 100, 50), Color.Lavender);
-                spriteBatch.DrawString(BossInfo, "-Quan kha mhar-", new Vector2((Game1.MAP_WIDTH / 3) / 2 - 180, 150), Color.Lavender);
+                spriteBatch.Draw(font, new Vector2((Game1.MAP_WIDTH / 3) / 2 - 100, 50), new Rectangle(0, 200, 420, 150), Color.White);
+                //spriteBatch.DrawString(BossInfo, "-Dullahan-", new Vector2((Game1.MAP_WIDTH/3)/2 - 100, 50), Color.Lavender);
+                //spriteBatch.DrawString(BossInfo, "-Quan kha mhar-", new Vector2((Game1.MAP_WIDTH / 3) / 2 - 180, 150), Color.Lavender);
             }
         }
         public void Restart()

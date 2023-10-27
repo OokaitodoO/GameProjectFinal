@@ -13,6 +13,24 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin ../../../Resources/Sfx/sfx/sfx/clicked.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:../../../Resources/Sfx/sfx/sfx/clicked.mp3;Sfx/clicked.mp3
+
+#begin ../../../Resources/Sfx/sfx/sfx/select.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:../../../Resources/Sfx/sfx/sfx/select.mp3;Sfx/select.mp3
+
+#begin ../../../Resources/Sfx/sfx/sfx/walk.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:../../../Resources/Sfx/sfx/sfx/walk.mp3;Sfx/walk.mp3
+
 #begin ball_mage.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -25,6 +43,36 @@
 /processorParam:TextureFormat=Color
 /build:ball_mage.png
 
+#begin Bgm/Dullahan.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Bgm/Dullahan.wav
+
+#begin Bgm/GeeGee.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Bgm/GeeGee.wav
+
+#begin Bgm/phoenix phase2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Bgm/phoenix phase2.wav
+
+#begin Bgm/Phoenix1_Bgm.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Bgm/Phoenix1_Bgm.wav
+
+#begin Bgm/Title.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Bgm/Title.wav
+
 #begin Boss/Dullaha/Dullahahitn_All_Set.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -36,6 +84,54 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Boss/Dullaha/Dullahahitn_All_Set.png
+
+#begin Boss/Phoegeon/FireBall_Phoenix.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Boss/Phoegeon/FireBall_Phoenix.png
+
+#begin Boss/Phoegeon/Phoenix_Animation_flyIdleAttackDie.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Boss/Phoegeon/Phoenix_Animation_flyIdleAttackDie.png
+
+#begin Boss/Phoegeon/Skill_Phoenix_Attack.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Boss/Phoegeon/Skill_Phoenix_Attack.png
+
+#begin Enemy/Monster_Mage_Sprite.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Enemy/Monster_Mage_Sprite.png
 
 #begin Enemy/Monster_Sword_all.png
 /importer:TextureImporter
@@ -121,6 +217,18 @@
 /processorParam:TextureFormat=Color
 /build:Scenes/Bg1.png
 
+#begin Scenes/Credits.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Scenes/Credits.png
+
 #begin Scenes/Map_Boss.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -169,6 +277,18 @@
 /processorParam:TextureFormat=Color
 /build:Scenes/Map_TileSet_Object_RoofOnly.png
 
+#begin Scenes/Select.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Scenes/Select.png
+
 #begin Scenes/Title/logo game solo  0.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -180,6 +300,150 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Scenes/Title/logo game solo  0.png
+
+#begin Sfx/bell.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/bell.wav
+
+#begin Sfx/clicked.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/clicked.wav
+
+#begin Sfx/fireballDrop.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/fireballDrop.wav
+
+#begin Sfx/fireballHit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/fireballHit.wav
+
+#begin Sfx/Hit attack.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/Hit attack.wav
+
+#begin Sfx/HittedHorse.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/HittedHorse.wav
+
+#begin Sfx/Horsecharge.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/Horsecharge.wav
+
+#begin Sfx/horsedead.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/horsedead.wav
+
+#begin Sfx/horseRun.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/horseRun.wav
+
+#begin Sfx/horseRush.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/horseRush.wav
+
+#begin Sfx/hoverButton.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/hoverButton.wav
+
+#begin Sfx/jazz-loop-rusted-maid-68244.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/jazz-loop-rusted-maid-68244.wav
+
+#begin Sfx/m_enemy_attack.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/m_enemy_attack.wav
+
+#begin Sfx/Miss attack.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/Miss attack.wav
+
+#begin Sfx/pheonixAtk.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/pheonixAtk.wav
+
+#begin Sfx/phoenixSpear.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/phoenixSpear.wav
+
+#begin Sfx/PlayerDash.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/PlayerDash.wav
+
+#begin Sfx/PlayerHurt.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/PlayerHurt.wav
+
+#begin Sfx/PlayerSkill.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/PlayerSkill.wav
+
+#begin Sfx/RangeEnemyMagic.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/RangeEnemyMagic.wav
+
+#begin Sfx/select.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/select.wav
+
+#begin Sfx/spearHorseHit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/spearHorseHit.wav
+
+#begin Sfx/Three.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/Three.wav
+
+#begin Sfx/walk.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sfx/walk.wav
 
 #begin Ui/button&-cursor.png
 /importer:TextureImporter
@@ -224,6 +488,30 @@
 /processorParam:TextureFormat=Color
 /build:Ui/GroupLogo.png
 
+#begin Ui/lastlogo.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Ui/lastlogo.png
+
+#begin Ui/mapselect.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Ui/mapselect.png
+
 #begin Ui/MonogameIcon.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -235,6 +523,78 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Ui/MonogameIcon.png
+
+#begin Ui/Text/credit.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Ui/Text/credit.png
+
+#begin Ui/Text/NameBossDull.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Ui/Text/NameBossDull.png
+
+#begin Ui/Text/NameBossPhoe.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Ui/Text/NameBossPhoe.png
+
+#begin Ui/Text/PauseText.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Ui/Text/PauseText.png
+
+#begin Ui/Text/ReturnTitle.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Ui/Text/ReturnTitle.png
+
+#begin Ui/Text/spritesheetFont.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Ui/Text/spritesheetFont.png
 
 #begin Ui/UI-characrtet_&Boss.png
 /importer:TextureImporter

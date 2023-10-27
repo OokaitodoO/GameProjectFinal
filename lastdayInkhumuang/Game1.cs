@@ -6,6 +6,7 @@ using System.IO;
 using System.Collections.Generic;
 using MonoGame.Extended.ViewportAdapters;
 using MonoGame.Extended;
+using Microsoft.Xna.Framework.Audio;
 
 namespace lastdayInkhumuang
 {
@@ -13,11 +14,11 @@ namespace lastdayInkhumuang
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        //private GraphicsDevice _graphicDevice;
         //TestCommit
         public static int GAME_STATE = 0; // 0: Tile | 1: Gameplay | 2: Pause
         public static bool LOCK_CAM;
 
+        //Controller
         KeyboardState ks = new KeyboardState();
         KeyboardState oldKs = new KeyboardState();
         MouseState ms = new MouseState();
@@ -46,6 +47,7 @@ namespace lastdayInkhumuang
         public Screen oldScreen;
         public FrontObject frontObject;
         public SelectScreen mSelect;
+        public CreditsScreen mCredit;
         
 
         //Player
@@ -59,7 +61,11 @@ namespace lastdayInkhumuang
         StaminaBar staminaBar;
         SpriteFont pause;
         Texture2D Cursor;
+        Texture2D Font;
         Vector2 cursorPos;
+
+        //Sounds
+        Sfx sfx;
 
         //Enemy
         public static int monsterCount;
@@ -100,6 +106,7 @@ namespace lastdayInkhumuang
             //Scenes
             frontObject = new FrontObject(this);
             mTitle = new TitleScreen(this, new EventHandler(TitleScreenEvent));
+            mCredit = new CreditsScreen(this, new EventHandler(CreditScreenEvent));
             mLevel1 = new Level1Screen(this, new EventHandler(Level1ScreenEvent));
             mLevel2 = new Level2Screen(this , new EventHandler(Level2ScreenEvent));
             mBoss1 = new SceneBoss(this, new EventHandler(SceneBossScreenEvent));
@@ -107,6 +114,8 @@ namespace lastdayInkhumuang
             pauseScreen = Content.Load<Texture2D>("Scenes/Bg1");
             mCurrentScreen = mTitle;
 
+            //bgm
+            sfx = new Sfx(this);
 
             //Player
             player = new Player(this, new Vector2(0,1500), 100, 100, 100, 5, 8, 13, 0.5f);
@@ -115,19 +124,12 @@ namespace lastdayInkhumuang
             //Ui
             playerStatusBar = new Player_Boss_StatusBar(this, Vector2.Zero, 580,  190, 1f);
             Cursor = Content.Load<Texture2D>("Ui/button&-cursor");
-            //hpBar = new HealthBar(this, Vector2.Zero, 250, 30, 1);
-            //staminaBar = new StaminaBar(this, new Vector2(0f, 30), 200, 25, 1);
-            pause = Content.Load<SpriteFont>("Ui/File");            
-        }
+            pause = Content.Load<SpriteFont>("Ui/File");
+            Font = Content.Load<Texture2D>("Ui/Text/spritesheetFont");
+        }       
 
         protected override void Update(GameTime gameTime)
         {
-            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-            //    Exit();
-
-            Console.WriteLine(GAME_STATE);
-            Console.WriteLine(IsCutscenes);
-
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             ks = Keyboard.GetState();
             ms = Mouse.GetState();
@@ -141,15 +143,15 @@ namespace lastdayInkhumuang
             switch (GAME_STATE)
             {
                 case 0:
+                    ManageGameSaveFile.ReadFile();
                     if (mCurrentScreen == mTitle)
                     {
-                        mTitle.Update(ms, oldMs, elapsed);
-                        ManageGameSaveFile.ReadFile();
+                        mTitle.Update(ms, oldMs, elapsed);                        
                     }                    
                     else if (mCurrentScreen == mSelect)
                     {
-                        mSelect.Update(elapsed);
-                    }                    
+                        mSelect.Update(ms, oldMs, elapsed);
+                    }                       
                     break;
                 case 1:                    
                     GamePlay(elapsed);                   
@@ -157,15 +159,6 @@ namespace lastdayInkhumuang
                 case 2:
                     break;
             }
-            //if (ks.IsKeyDown(Keys.F1))
-            //{
-            //    GAME_STATE = 1;
-            //}
-            //if (ks.IsKeyDown(Keys.Escape))
-            //{
-            //    GAME_STATE = 2;
-            //}
-            //Console.WriteLine(GAME_STATE);
             oldKs = ks;
             oldMs = ms;
             base.Update(gameTime);
@@ -192,7 +185,7 @@ namespace lastdayInkhumuang
             frontObject.Draw(_spriteBatch, player, this);
 
             //StatusBar
-            if (mCurrentScreen != mTitle && mCurrentScreen != mSelect)
+            if (mCurrentScreen != mTitle && mCurrentScreen != mSelect && mCurrentScreen != mCredit)
             {
                 playerStatusBar.Draw(_spriteBatch);
             }
@@ -202,13 +195,17 @@ namespace lastdayInkhumuang
                 _spriteBatch.Draw(pauseScreen, _cameraPosition, Color.Gray * 0.5f);               
                 if (player.GetAlive())
                 {
-                    _spriteBatch.DrawString(pause, "Pause...", _cameraPosition + new Vector2(410, 0), Color.White);
-                    _spriteBatch.DrawString(pause, "Press Enter : Return to Title", _cameraPosition + new Vector2(0, 500), Color.White);
+                    _spriteBatch.Draw(Font, _cameraPosition + new Vector2(380, 0), new Rectangle(0, 85, 300, 100), Color.White);// Pause
+                    _spriteBatch.Draw(Font, _cameraPosition + new Vector2(0, 500), new Rectangle(0, 0, 870, 70), Color.White);//Return_Title
+                    //_spriteBatch.DrawString(pause, "Pause...", _cameraPosition + new Vector2(410, 0), Color.White);
+                    //_spriteBatch.DrawString(pause, "Press Enter : Return to Title", _cameraPosition + new Vector2(0, 500), Color.White);
                 }
                 else if (!player.GetAlive())
                 {
-                    _spriteBatch.DrawString(pause, "Nice try...", _cameraPosition + new Vector2(410, 0), Color.White);
-                    _spriteBatch.DrawString(pause, "Press Enter : Respawn", _cameraPosition + new Vector2(0, 500), Color.White);
+                    _spriteBatch.Draw(Font, _cameraPosition + new Vector2(390, 0), new Rectangle(0, 520, 300, 100), Color.White);// NiceTry
+                    _spriteBatch.Draw(Font, _cameraPosition + new Vector2(0, 500), new Rectangle(0, 625, 650, 100), Color.White);
+                    //_spriteBatch.DrawString(pause, "Nice try...", _cameraPosition + new Vector2(410, 0), Color.White);
+                    //_spriteBatch.DrawString(pause, "Press Enter : Respawn", _cameraPosition + new Vector2(0, 500), Color.White);
                 }
                 
             }
@@ -250,27 +247,27 @@ namespace lastdayInkhumuang
                 player.ResetFrame();
             }
         }
-        protected void Pause()
-        {
-            if (ks.IsKeyDown(Keys.Enter))
-            {
-                LOCK_CAM = true;
-                mCurrentScreen = mTitle;
-                _cameraPosition = Vector2.Zero;
-                _camera.LookAt(_bgPosition);
-                GAME_STATE = 0;
-            }            
-        }
-        protected void Restart()
-        {
-            if (ks.IsKeyDown(Keys.Enter))
-            {
-                player.Restart();
-                Console.Clear();
-                GAME_STATE = 1;
-            }
+        //protected void Pause()
+        //{
+        //    if (ks.IsKeyDown(Keys.Enter))
+        //    {
+        //        LOCK_CAM = true;
+        //        mCurrentScreen = mTitle;
+        //        _cameraPosition = Vector2.Zero;
+        //        _camera.LookAt(_bgPosition);
+        //        GAME_STATE = 0;
+        //    }            
+        //}
+        //protected void Restart()
+        //{
+        //    if (ks.IsKeyDown(Keys.Enter))
+        //    {
+        //        player.Restart();
+        //        Console.Clear();
+        //        GAME_STATE = 1;
+        //    }
             
-        }
+        //}
 
         public void UpdateCamera(Vector2 move)
         {
@@ -303,9 +300,20 @@ namespace lastdayInkhumuang
             //_cameraPosition = new Vector2(0, 1200);
             //monsterCount = Level1Screen.Enemy.Count;                        
         }
+
+        public void CreditScreenEvent(object obj, EventArgs e)
+        {
+            mCurrentScreen = mTitle;
+            oldScreen = mCredit;
+            changeScreen = true;
+            FrontObject.timer = 1;
+            _cameraPosition = Vector2.Zero;
+            monsterCount = 0;                       
+        }
         public void SelectLevel1ScreenEvent(object obj, EventArgs e)
         {
             mCurrentScreen = mLevel1;
+            player.Restart();
             oldScreen = mSelect;
             changeScreen = true;
             FrontObject.timer = 1;
@@ -318,13 +326,14 @@ namespace lastdayInkhumuang
         public void SelectLevel2ScreenEvent(object obj, EventArgs e)
         {
             mCurrentScreen = mLevel2;
+            player.Restart();
             oldScreen = mSelect;
             changeScreen = true;
             FrontObject.timer = 1;
-            Level2Screen.ResetScreen(player);
+            Level2Screen.ResetScreen(player);   
             IsCutscenes = false;
             _cameraPosition = new Vector2(0, 0);
-            monsterCount = Level1Screen.Enemy.Count;
+            monsterCount = Level2Screen.Enemy.Count;
             player.SetPos(new Vector2(350, 250));
         }
         public void Level1ScreenEvent(object obj, EventArgs e)
@@ -336,6 +345,7 @@ namespace lastdayInkhumuang
             SceneBoss.ResetScreen(player, this);
             _cameraPosition = new Vector2(0, 0);
             monsterCount = 1;
+            Sfx.InsStopSfx(14);
         }
         public void Level2ScreenEvent(object obj, EventArgs e)
         {
@@ -346,6 +356,7 @@ namespace lastdayInkhumuang
             SceneBoss.ResetScreen(player, this);
             _cameraPosition = new Vector2(0, 640);
             monsterCount = 1;
+            Sfx.InsStopSfx(14);
 
             //Test
             //_camera.LookAt(Game1._bgPosition);
@@ -369,13 +380,13 @@ namespace lastdayInkhumuang
             }
             else if (oldScreen == mLevel2)
             {
-                mCurrentScreen = mTitle;
+                mCurrentScreen = mCredit;
                 IsCutscenes = false;
                 changeScreen = true;
                 FrontObject.timer = 1;
                 GAME_STATE = 0;
             }
-            
+            Sfx.InsStopSfx(14);
         }
     }
 }

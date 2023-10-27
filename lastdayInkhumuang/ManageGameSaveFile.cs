@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace lastdayInkhumuang
 {
@@ -27,13 +28,34 @@ namespace lastdayInkhumuang
                 sr.Close();
             }                                     
         }
-        public static void WriteFiles(string text)
+        public static void WriteFiles(string text) //Create
         {
             FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
-            sw.WriteLine(text);
+            sw.WriteLine(text);            
             sw.Flush();
             sw.Close();
+        }
+
+        public static void AddSave(string text) 
+        {
+            if (listText.Count == 1)
+            {
+                FileStream fs = new FileStream(filePath, FileMode.Append, FileAccess.Write);
+                StreamWriter sw = new StreamWriter(fs);
+                sw.WriteLine(text);
+                sw.Flush();
+                sw.Close();
+            }            
+        }
+
+        public static void DeleteSave()
+        {
+            listText.Clear();
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
         }
         public static bool GetFileExists()
         {

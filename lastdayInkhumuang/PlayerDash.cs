@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace lastdayInkhumuang
 {
-    public class PlayerDash : Player, IGameFunction
+    public class PlayerDash : Player
     {
         public static bool IsDash;
         public PlayerDash(Game1 game, Vector2 origin, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, Vector2.Zero, origin, frames, framesPerSec, framesRow, layerDepth)

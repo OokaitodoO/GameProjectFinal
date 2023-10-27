@@ -18,6 +18,7 @@ namespace lastdayInkhumuang
         public static List<BoundsCheck> Bounds = new List<BoundsCheck>();
         Game1 game;
 
+
         Vector2 playerPos;
 
         bool mapClear;
@@ -29,56 +30,58 @@ namespace lastdayInkhumuang
             tutorialKeys = game.Content.Load<Texture2D>("Ui/button&-cursor");
             mapClear = false;
 
-            ////MonZone1
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(1030, 1535), Vector2.Zero, 90, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(1030, 1560), Vector2.Zero, 90, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(1255, 1660), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(1400, 1660), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(1540, 1660), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            ////MonZone2
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(2430, 1665), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(2530, 1665), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(2700, 1535), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(2820, 1665), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            ////MonZone3(Middle)
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(1665, 1020), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(1535, 905), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(1290, 1025), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(900, 900), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(770, 1030), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            ////MonZone4(Top-Left)
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(340, 270), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(230, 305), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(134, 500), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            ////MonZome5(Top-Mid)
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(1030, 260), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(1150, 500), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(1300, 190), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(1315, 455), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(1475, 320), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            ////MonZone6(Top-Right)
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(2060, 240), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(2056, 430), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(2235, 190), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(2225, 500), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(2360, 360), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(2430, 190), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(2530, 470), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
-            //Enemy.Add(new Melee_Enemy(game, new Vector2(2645, 285), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            //MonZone1
+            Enemy.Add(new Melee_Enemy(game, new Vector2(1030, 1535), Vector2.Zero, 90, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(1030, 1560), Vector2.Zero, 90, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(1255, 1660), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(1400, 1660), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(1540, 1660), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            //test
+            Enemy.Add(new Range_Enemy(game, new Vector2(1640, 1560), Vector2.Zero, 125, 150, 5, 7, 4, 0.3f));
+            //MonZone2
+            Enemy.Add(new Melee_Enemy(game, new Vector2(2430, 1665), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(2530, 1665), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(2700, 1535), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(2820, 1665), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            //MonZone3(Middle)
+            Enemy.Add(new Melee_Enemy(game, new Vector2(1665, 1020), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(1535, 905), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(1290, 1025), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(900, 900), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(770, 1030), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            //MonZone4(Top-Left)
+            Enemy.Add(new Melee_Enemy(game, new Vector2(340, 270), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(230, 305), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(134, 500), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            //MonZome5(Top-Mid)
+            Enemy.Add(new Melee_Enemy(game, new Vector2(1030, 260), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(1150, 500), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(1300, 190), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(1315, 455), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(1475, 320), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            //MonZone6(Top-Right)
+            Enemy.Add(new Melee_Enemy(game, new Vector2(2060, 240), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(2056, 430), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(2235, 190), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(2225, 500), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(2360, 360), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(2430, 190), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(2530, 470), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
+            Enemy.Add(new Melee_Enemy(game, new Vector2(2645, 285), Vector2.Zero, 125, 150, 5, 7, 5, 0.3f));
 
-            ////Bounds
-            //Bounds.Add(new BoundsCheck(game, new Vector2(0, Game1.TILE_SIZE * 9), Game1.TILE_SIZE * 2, Game1.TILE_SIZE * 20));
-            //Bounds.Add(new BoundsCheck(game, new Vector2(0, Game1.TILE_SIZE * 5), Game1.TILE_SIZE * 4, Game1.TILE_SIZE * 4));
-            //Bounds.Add(new BoundsCheck(game, new Vector2(0, 0), Game1.TILE_SIZE * 5, Game1.TILE_SIZE));
-            //Bounds.Add(new BoundsCheck(game, new Vector2(0, 0), Game1.TILE_SIZE, Game1.TILE_SIZE * 25));
-            //Bounds.Add(new BoundsCheck(game, new Vector2(Game1.TILE_SIZE * 24, Game1.TILE_SIZE * 4), Game1.TILE_SIZE * 11, Game1.TILE_SIZE));
-            //Bounds.Add(new BoundsCheck(game, new Vector2(Game1.TILE_SIZE * 6, Game1.TILE_SIZE * 5), Game1.TILE_SIZE * 2, Game1.TILE_SIZE * 14));
-            //Bounds.Add(new BoundsCheck(game, new Vector2(Game1.TILE_SIZE * 20, Game1.TILE_SIZE * 5), Game1.TILE_SIZE, Game1.TILE_SIZE * 4));
-            ////BoundsOutMap
-            //Bounds.Add(new BoundsCheck(game, new Vector2(-(Game1.TILE_SIZE * 2), 0), Game1.TILE_SIZE * 15, Game1.TILE_SIZE * 2));
-            //Bounds.Add(new BoundsCheck(game, new Vector2((Game1.TILE_SIZE * 25), 0), Game1.TILE_SIZE * 15, Game1.TILE_SIZE * 2));
-            //Bounds.Add(new BoundsCheck(game, new Vector2(0, -(Game1.TILE_SIZE * 2)), Game1.TILE_SIZE * 2, Game1.TILE_SIZE * 25));
-            //Bounds.Add(new BoundsCheck(game, new Vector2(0, (Game1.TILE_SIZE * 14)), Game1.TILE_SIZE * 2, Game1.TILE_SIZE * 25));
+            //Bounds
+            Bounds.Add(new BoundsCheck(game, new Vector2(0, Game1.TILE_SIZE * 9), Game1.TILE_SIZE * 2, Game1.TILE_SIZE * 20));
+            Bounds.Add(new BoundsCheck(game, new Vector2(0, Game1.TILE_SIZE * 5), Game1.TILE_SIZE * 4, Game1.TILE_SIZE * 4));
+            Bounds.Add(new BoundsCheck(game, new Vector2(0, 0), Game1.TILE_SIZE * 5, Game1.TILE_SIZE));
+            Bounds.Add(new BoundsCheck(game, new Vector2(0, 0), Game1.TILE_SIZE, Game1.TILE_SIZE * 25));
+            Bounds.Add(new BoundsCheck(game, new Vector2(Game1.TILE_SIZE * 24, Game1.TILE_SIZE * 4), Game1.TILE_SIZE * 11, Game1.TILE_SIZE));
+            Bounds.Add(new BoundsCheck(game, new Vector2(Game1.TILE_SIZE * 6, Game1.TILE_SIZE * 5), Game1.TILE_SIZE * 2, Game1.TILE_SIZE * 14));
+            Bounds.Add(new BoundsCheck(game, new Vector2(Game1.TILE_SIZE * 20, Game1.TILE_SIZE * 5), Game1.TILE_SIZE, Game1.TILE_SIZE * 4));
+            //BoundsOutMap
+            Bounds.Add(new BoundsCheck(game, new Vector2(-(Game1.TILE_SIZE * 2), 0), Game1.TILE_SIZE * 15, Game1.TILE_SIZE * 2));
+            Bounds.Add(new BoundsCheck(game, new Vector2((Game1.TILE_SIZE * 25), 0), Game1.TILE_SIZE * 15, Game1.TILE_SIZE * 2));
+            Bounds.Add(new BoundsCheck(game, new Vector2(0, -(Game1.TILE_SIZE * 2)), Game1.TILE_SIZE * 2, Game1.TILE_SIZE * 25));
+            Bounds.Add(new BoundsCheck(game, new Vector2(0, (Game1.TILE_SIZE * 14)), Game1.TILE_SIZE * 2, Game1.TILE_SIZE * 25));
 
             Game1.monsterCount = Enemy.Count;
             this.game= game;
@@ -95,6 +98,8 @@ namespace lastdayInkhumuang
                     Game1.IsCutscenes = true;
                     player.SetPos(new Vector2(0, 200));
                     Game1.monsterCount = 1;
+                    Sfx.InsPlaySfx(21);
+                    Sfx.InsStopSfx(20);
                     ScreenEvent.Invoke(this, new EventArgs());
                     return;
                 }
@@ -131,11 +136,17 @@ namespace lastdayInkhumuang
                         {
                             ((Melee_Enemy)gameObject).CheckMapColiision(bounds, elapsed);
                         }
+                        if (gameObject.GetType().IsAssignableTo(typeof(Range_Enemy)))
+                        {
+                            ((Range_Enemy)gameObject).CheckMapColiision(bounds);
+                        }
                     }
                 }
                 if (ks.IsKeyDown(Keys.Escape) && oldks.IsKeyUp(Keys.Escape))
                 {
                     Game1.GAME_STATE = 2;
+                    Sfx.PlaySfx(0);
+                    Sfx.InsStopSfx(14);
                 }
                 
             }
@@ -144,7 +155,7 @@ namespace lastdayInkhumuang
                 if (ks.IsKeyDown(Keys.Enter) && !player.GetAlive())
                 {
                     Game1.GAME_STATE = 1;
-                    player.Restart();
+                    player.Restart(new Vector2(0, 1500));
                     foreach (GameObject gameObject in Enemy)
                     {
                         if (gameObject.GetType().IsAssignableTo(typeof(Melee_Enemy)))
@@ -163,11 +174,17 @@ namespace lastdayInkhumuang
                     Game1.GAME_STATE = 0;
                     Game1._cameraPosition = Vector2.Zero;
                     Game1._camera.LookAt(Game1._bgPosition);
-                    game.mCurrentScreen = game.mTitle;                    
+                    game.mCurrentScreen = game.mTitle;
+                    player.Restart();
+                    Sfx.PlaySfx(0);
+                    Sfx.InsStopSfx(20);
+                    Sfx.InsPlaySfx(19);
+                    Sfx.InsStopSfx(14);
                 }
                 else if (ks.IsKeyDown(Keys.Escape) && oldks.IsKeyUp(Keys.Escape))
                 {
                     Game1.GAME_STATE = 1;
+                    Sfx.PlaySfx(0);
                 }
             }
             oldks = ks;
@@ -206,7 +223,7 @@ namespace lastdayInkhumuang
         }
         public static void ResetScreen(Player player)
         {
-            player.Restart();
+            player.Restart(new Vector2(0, 1500));
             foreach (GameObject gameObject in Enemy)
             {
                 if (gameObject.GetType().IsAssignableTo(typeof(Melee_Enemy)))

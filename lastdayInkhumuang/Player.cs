@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace lastdayInkhumuang
 {
-    public class Player : AnimatedObject, IGameFunction
+    public class Player : AnimatedObject
     {
         PlayerDash dashEffect;
-        public Game game;
+        public Game1 game;
         int SpriteRow;
         Vector2 startPos;
         Vector2 lastPos;
@@ -23,7 +23,7 @@ namespace lastdayInkhumuang
         float timerAtk;
         public int comboCount;
         public bool chainCombo;
-        protected bool skilled;
+        public static bool skilled;
         public bool dash;
         const int WIDTH = 128;
         const int HEIGHT = 128;
@@ -40,7 +40,7 @@ namespace lastdayInkhumuang
         bool flip;
         bool boundMap;
         bool move;
-
+        bool IsPlaySfx;
         bool alive;
 
         public Player(Game1 game, Vector2 position, float hp, float stamina, float mana, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, Vector2.Zero, 128, 128, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
@@ -58,6 +58,7 @@ namespace lastdayInkhumuang
             skilled = false;
             dash = false;
             alive = true;
+            IsPlaySfx = false;
         }
         public Player(Game1 game, Vector2 position, Vector2 origin, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, origin, Vector2.Zero, 128, 128, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
         {
@@ -68,8 +69,7 @@ namespace lastdayInkhumuang
         public Vector2 Position => position;
         
         public void Update(Game1 game,KeyboardState ks, KeyboardState oldKs, MouseState ms, PlayerSkills skill, float elapsed)
-        {           
-
+        {
             lastPos = position;
             CheckDirection(ms);
             //Attack (not yet complete)
@@ -104,6 +104,7 @@ namespace lastdayInkhumuang
             }
             if (skilled)
             {
+                Sfx.InsPlaySfx(24);
                 spriteTexture.UpdateFrame(elapsed);
                 if (spriteTexture.GetFrame() == 4)
                 {
@@ -247,6 +248,14 @@ namespace lastdayInkhumuang
                         UpdateFrame(elapsed);
                     }
                 }
+                if (move)
+                {
+                    Sfx.InsPlaySfx(14);
+                }
+                else
+                {
+                    Sfx.InsStopSfx(14);
+                }
             }
             
             //Dash
@@ -255,6 +264,7 @@ namespace lastdayInkhumuang
                 dash = true;
                 if (!attacked && !skilled && stamina > 20)
                 {
+                    Sfx.PlaySfx(23);
                     Dash(ms);
                     stamina -= 20;
                 }
@@ -430,32 +440,64 @@ namespace lastdayInkhumuang
             position = pos;
         }
         public void CheckColiision(GameObject other, bool dealDamage)
-        {
+        {             
             if (other.GetType().IsAssignableTo(typeof(Range_Enemy)))
             {
                 if (((Range_Enemy)other).Rasengan().Intersects(this.Bounds) && dealDamage)
                 {
+                    Sfx.PlaySfx(11);
                     hp -= 5;
+                }
+            }
+            if (other is MiniBoss2)
+            {
+                for (int i = 0; i < ((MiniBoss2)other).flameThrower.Count; i++)
+                {
+                    if (((MiniBoss2)other).GetFlameThrower(i).Intersects(Bounds) && ((MiniBoss2)other).GetFallRec(i).Intersects(Bounds))
+                    {
+                        Sfx.PlaySfx(11);
+                        hp -= 5;
+                    }
                 }
             }
             if (other.Bounds.Intersects(this.Bounds))
             {
                 if (other.GetType().IsAssignableTo(typeof(Melee_Enemy)) && dealDamage)
                 {
+                    Sfx.PlaySfx(11);
                     hp -= 5;
-                }                
+                }
                 if (other.GetType().IsAssignableTo(typeof(MiniBoss1)) && dealDamage)
                 {
                     if (((MiniBoss1)other).GetSpear())
                     {
+                        Sfx.PlaySfx(11);
                         hp -= 4;
                     }
                     else
                     {
+                        Sfx.PlaySfx(11);
                         hp -= 15;
                     }
                 }
-            }
+                if (other.GetType().IsAssignableTo(typeof(MiniBoss2)) && dealDamage)
+                {
+                    if (((MiniBoss2)other).GetSpear())
+                    {
+                        Sfx.PlaySfx(11);
+                        hp -= 4;
+                    }
+                    else
+                    {
+                        Sfx.PlaySfx(11);
+                        hp -= 15;
+                    }
+                }
+                //if (other.GetType().IsAssignableTo(typeof(MiniBoss2)))
+                //{                   
+                //    Console.WriteLine("Hitted");
+                //}                
+            }            
         }
         public void CheckMapColiision(BoundsCheck other)
         {
@@ -497,13 +539,25 @@ namespace lastdayInkhumuang
             dashEffect.Draw(spriteBatch, this);
         }
 
+        public void Restart(Vector2 pos)
+        {             
+            PlayerSkills.Restart();
+            PlayerDash.SetIsDash(false);
+            hp = 100;
+            stamina = 100;
+            position = pos;
+            attacked = false;
+            chainCombo = false;
+            skilled = false;
+            dash = false;
+            spriteTexture.Reset();
+        }
         public void Restart()
         {
             PlayerSkills.Restart();
             PlayerDash.SetIsDash(false);
             hp = 100;
             stamina = 100;
-            position = startPos;
             attacked = false;
             chainCombo = false;
             skilled = false;

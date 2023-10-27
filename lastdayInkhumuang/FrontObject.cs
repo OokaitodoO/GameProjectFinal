@@ -18,8 +18,13 @@ namespace lastdayInkhumuang
         const int boss1_MaxHp = 500;
         const int boss1_MaxHpWidth = 519;
         const int boss1_MaxHpHeight = 14;
+        const int boss2_MaxHp = 500;
+        const int boss2_MaxHpWidth = 519;
+        const int boss2_MaxHpHeight = 14;
         Vector2 bossHpPos = new Vector2(((Game1.MAP_WIDTH / 3) / 2) - (boss1_MaxHpWidth / 2), 550);
+        Vector2 boss2HpPos = new Vector2(((Game1.MAP_WIDTH / 3) / 2) - (boss1_MaxHpWidth / 2), 600 * 2);
         float boss1HpWidth;
+        float boss2HpWidth;
         public FrontObject(Game1 game)
         {
             //BossBar
@@ -49,6 +54,7 @@ namespace lastdayInkhumuang
         {
             //this.elapsed = elapsed;            
             boss1HpWidth = (MiniBoss1.hp / boss1_MaxHp) * boss1_MaxHpWidth;
+            boss2HpWidth = (MiniBoss2.hp / boss2_MaxHp) * boss2_MaxHpWidth;
 
             if (timer > 0)
             {
@@ -78,10 +84,15 @@ namespace lastdayInkhumuang
                     }
                 }
             }
-            if (game.mCurrentScreen == game.mBoss1)
+            if (game.oldScreen == game.mLevel1 && game.mCurrentScreen == game.mBoss1)
             {
                 spriteBatch.Draw(statusBar, bossHpPos + new Vector2(9, 4), new Rectangle(57, 252, (int)boss1HpWidth, 48), Color.Red, 0f, Vector2.Zero, new Vector2(1f, 0.6f), 0, 0);
                 spriteBatch.Draw(statusBar, bossHpPos, new Rectangle(45, 191, 519, 48), Color.White, 0f, Vector2.Zero, new Vector2(1f, 0.6f), 0, 0);
+            }
+            else if (game.oldScreen == game.mLevel2 && game.mCurrentScreen == game.mBoss1)
+            {
+                spriteBatch.Draw(statusBar, boss2HpPos + new Vector2(9, 4), new Rectangle(57, 252, (int)boss2HpWidth, 48), Color.Red, 0f, Vector2.Zero, new Vector2(1f, 0.6f), 0, 0);
+                spriteBatch.Draw(statusBar, boss2HpPos, new Rectangle(45, 191, 519, 48), Color.White, 0f, Vector2.Zero, new Vector2(1f, 0.6f), 0, 0);
             }
 
             //DrawFade

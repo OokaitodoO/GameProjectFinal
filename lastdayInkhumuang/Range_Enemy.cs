@@ -31,7 +31,7 @@ namespace lastdayInkhumuang
         float delayAttack;
         public Range_Enemy(Game1 game, Vector2 position, Vector2 tileLocation, int boundHeight, int boundWidth, int frames, int framesPerSec, int framesRow, float layerDepth) : base(game, position, Vector2.Zero, boundHeight, boundWidth, TILE_SIZE, TILE_SIZE, frames, framesPerSec, framesRow, layerDepth)
         {
-            spriteTexture.Load(game.Content, "Enemy/Monster_Sword_all", frames, framesRow, framesPerSec);
+            spriteTexture.Load(game.Content, "Enemy/Monster_Mage_Sprite", frames, framesRow, framesPerSec);
             rasengan = game.Content.Load<Texture2D>("ball_mage");            
             this.boundHeight= boundHeight;
             this.boundWidth= boundWidth;
@@ -62,7 +62,6 @@ namespace lastdayInkhumuang
             //attackRange = new Vector2(detectArea.X + 100, detectArea.Y + 100);
 
             rasenganRec = new Rectangle((int)rasenganPos.X, (int)rasenganPos.Y, 24, 24);
-
             //Check Alive
             if (alive)
             {
@@ -78,7 +77,7 @@ namespace lastdayInkhumuang
             }
             if (!alive)
             {
-                spriteRow = 4;
+                spriteRow = 3;
                 if (spriteTexture.GetFrame() == 3)
                 {
                     spriteTexture.Pause(4, 4);
@@ -90,11 +89,11 @@ namespace lastdayInkhumuang
                 lastPos = position;
                 CheckDirection(player);
                 //Check detect
-                if (readyAttack && !attack && player.Bounds.X + 28 > detectArea.X && player.Bounds.X < detectArea.X + RANGE_WIDTH + 200 && player.Bounds.Y + 64 > detectArea.Y && player.Bounds.Y < detectArea.Y + RANGE_HEIGHT)
+                if (!Hitted && readyAttack && !attack && player.Bounds.X + 28 > detectArea.X && player.Bounds.X < detectArea.X + RANGE_WIDTH + 200 && player.Bounds.Y + 64 > detectArea.Y && player.Bounds.Y < detectArea.Y + RANGE_HEIGHT)
                 {
                     detect = true;
                     attack = true;
-                    spriteRow = 3;
+                    spriteRow = 2;
                 }
                 //Attack
                 //if (attack)
@@ -135,7 +134,7 @@ namespace lastdayInkhumuang
                 //Hitted                
                 if (Hitted && delayHitted == 0)
                 {
-                    spriteRow = 5;
+                    spriteRow = 4;
                     Hitted = true;
                     spriteTexture.Reset();
                     hp -= damage;
@@ -182,13 +181,13 @@ namespace lastdayInkhumuang
                         {
                             position.X += speed;
                             spriteRow = 1;
-                            flip = false;
+                            flip = true;
                         }
                         if (position.X > player.GetPos().X) //Left
                         {
                             position.X -= speed;
                             spriteRow = 1;
-                            flip = true;
+                            flip = false;
                         }
                         if (position.Y + 55 < player.GetPos().Y) //Down
                         {
@@ -234,7 +233,7 @@ namespace lastdayInkhumuang
                     {
                         outSide = false;
                         detect = false;
-                        spriteRow = 2;
+                        spriteRow = 1;
                         if (hp < 100)
                         {
                             hp += REGEN_HP;
@@ -250,6 +249,7 @@ namespace lastdayInkhumuang
                 //hitcooldown
                 if (Hitted)
                 {
+                    spriteTexture.Pause(1, 4);
                     attack = false;
                     delayHitted += elapsed;
                     if (delayHitted >= 0.3)
@@ -269,7 +269,15 @@ namespace lastdayInkhumuang
                 }                
                 if (releaseBullet)
                 {
-                    spriteTexture.Pause(3, 3);
+                    if (!Hitted)
+                    {
+                        spriteTexture.Pause(1, 2);
+                    }
+                    else
+                    {
+                        spriteTexture.Pause(0, 4);
+                    }
+                    
                     rasenganPos += new Vector2(SPEED_BULLET * (float)Math.Cos(rasenganRo), SPEED_BULLET * (float)Math.Sin(rasenganRo));
                     delayAttack += elapsed;
                     if (delayAttack >= 3)
@@ -278,6 +286,8 @@ namespace lastdayInkhumuang
                         releaseBullet = false;
                         attack = false;
                         readyAttack = true;
+                        spriteTexture.Reset();
+                        Console.WriteLine("ResetFrame");
                         spriteTexture.Play();
                     }
                 }
@@ -441,7 +451,15 @@ namespace lastdayInkhumuang
         public override void Draw(SpriteBatch spriteBatch)
         {
             rasenganVisible = false;
-            spriteTexture.DrawFrame(spriteBatch, position, spriteRow, flip);
+            if (!Hitted)
+            {
+                spriteTexture.DrawFrame(spriteBatch, position, spriteRow, flip);
+            }
+            else
+            {
+                spriteTexture.DrawFrame(spriteBatch, position, 4, flip);
+            }
+            
             if (releaseBullet && !hitPlayer && alive)
             {
                 rasenganVisible = true;

@@ -10,11 +10,12 @@ using System.Threading.Tasks;
 
 namespace lastdayInkhumuang
 {
-    public class PlayerSkills : Player, IGameFunction
+    public class PlayerSkills : Player
     {
         const int SPEED = 10;
         public static int spriteRow;
         public static bool released;
+        public static bool skilled;
         float elapsed;
         Vector2 origin;
 
@@ -81,6 +82,7 @@ namespace lastdayInkhumuang
         }
         public static void Restart()
         {
+            skilled= false;
             released = false;
             spriteRow = 1;
         }
@@ -90,15 +92,22 @@ namespace lastdayInkhumuang
             {               
                 if (other.GetType().IsAssignableTo(typeof(Melee_Enemy)) && released)
                 {
+                    
                     ((Melee_Enemy)other).GotDamage(65);
                 }
                 if (other.GetType().IsAssignableTo(typeof(Range_Enemy)) && released)
                 {
+                    
                     ((Range_Enemy)other).GotDamage(65);
                 }
                 if (other.GetType().IsAssignableTo(typeof(MiniBoss1)) && released)
                 {
+                    
                     ((MiniBoss1)other).GotDamage(65);
+                }
+                if (other.GetType().IsAssignableTo(typeof(MiniBoss2)) && released)
+                {
+                    ((MiniBoss2)other).GotDamage(65);
                 }
             }
 
